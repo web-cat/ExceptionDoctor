@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ExceptionDoctor" default="build">
+  <target name="build"
+    depends="build.doctor, build.bluej.core, build.bluej.junit, build.junit"/>
+
+  <target name="build.doctor">
+  	<delete file="exception-doctor.jar"/>
+  	<jar destfile="exception-doctor.jar">
+  	  <fileset dir="bin" excludes="bluej/,junit/,org/junit/"/>
+  	</jar>
+  </target>
+
+  <target name="build.bluej.core">
+  	<delete file="bluejcore.jar"/>
+    <jar destfile="bluejcore.jar">
+      <zipfileset src="../BlueJ/bluejcore.jar"
+        excludes="bluej/runtime/ExecServer*.class"/>
+      <fileset dir="bin" includes="bluej/runtime/"/>
+    </jar>
+  </target>
+
+  <target name="build.bluej.junit">
+    <delete file="junit.jar"/>
+    <jar destfile="junit.jar">
+      <zipfileset src="../BlueJ/junit.jar"
+        excludes="junit/framework/TestCase.class"/>
+      <fileset dir="bin" includes="junit/framework/,org/webcat/"/>
+    </jar>
+  </target>
+
+  <target name="build.junit">
+    <delete file="exception-doctor-junit.jar"/>
+    <jar destfile="exception-doctor-junit.jar">
+      <zipfileset src="junit-4.7.jar"
+        excludes="junit/framework/TestCase.class,org/junit/internal/runners/model/EachTestNotifier.class"/>
+      <fileset dir="bin" excludes="bluej/"/>
+    </jar>
+  </target>
+
+</project>
+
