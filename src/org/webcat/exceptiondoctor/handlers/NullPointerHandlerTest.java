@@ -29,6 +29,7 @@ public class NullPointerHandlerTest extends TestCase
 
 		}
 		assertNotNull(wrapped);
+		System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
 	}
 
 	@SuppressWarnings("null")
@@ -57,6 +58,34 @@ public class NullPointerHandlerTest extends TestCase
 			}
 		}
 		assertNotNull(wrapped);
+        System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
 	}
+
+    @SuppressWarnings("null")
+    public void testHandleException3()
+    {
+        NullPointerExceptionHandler handle = new NullPointerExceptionHandler();
+        NullPointerException wrapped = null;
+        try
+        {
+            Integer i = null;
+            System.out.println(i.toString().equals(i.intValue()));
+
+        }
+        catch (NullPointerException e)
+        {
+            try
+            {
+                wrapped = (NullPointerException) handle.wrapException(e);
+            }
+            catch (Throwable e1)
+            {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
+        assertNotNull(wrapped);
+        System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
+    }
 
 }

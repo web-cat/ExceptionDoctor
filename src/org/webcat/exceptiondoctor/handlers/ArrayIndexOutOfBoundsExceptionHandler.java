@@ -1,6 +1,7 @@
 package org.webcat.exceptiondoctor.handlers;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
@@ -16,12 +17,12 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 		super("ArrayIndexOutOfBoundsException");
 	}
 
-	private String getArrayName(String[] variables)
+	private String getArrayName(List<String> variables)
 	{
-		if (variables != null && variables.length == 1)
+		if (variables.size() == 1)
 		{
 
-			return variables[0];
+			return variables.get(0);
 		}
 		return null;
 	}
@@ -38,7 +39,7 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 	{
 		String line = getLine(exToWrap);
 		String oldMessage = getMessage(exToWrap);
-		String[] variables = getVariables(line, "[");
+		List<String> variables = getVariables(line, "[");
 		int intValue = getValue(oldMessage);
 		String arrayIndex = getIndexValue(variables, line);
 		String newMessage = buildErrorMessage(oldMessage, intValue, arrayIndex,
@@ -49,7 +50,7 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 	}
 
 	private String buildErrorMessage(String value, int intValue,
-			String arrayIndex, String[] variables)
+			String arrayIndex, List<String> variables)
 	{
 		String error = "";
 
@@ -77,10 +78,10 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 		return error;
 	}
 
-	public String getIndexValue(String[] variables, String line)
+	public String getIndexValue(List<String> variables, String line)
 	{
 		String index = "";
-		if (variables != null && variables.length == 1)
+		if (variables.size() == 1)
 		{
 			// if the index is a variable in the line of code, we need to
 			// explain that
@@ -115,13 +116,13 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 		return error;
 	}
 
-	private String getArrayNameMessage(String[] variables, String value)
+	private String getArrayNameMessage(List<String> variables, String value)
 	{
 		String error = "";
-		if (variables != null && variables.length > 0)
+		if (variables.size() > 0)
 		{
 			error += "It seems that the code tried to use an illegal value as an index to an array.  ";
-			if (variables.length == 1)
+			if (variables.size() == 1)
 			{
 				error += "The code was trying to access an element at index "
 						+ value + " of the array called \""
@@ -145,15 +146,15 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 	}
 
 	// TODO: Improve this
-	private String getMultipleArrayNames(String[] variables)
+	private String getMultipleArrayNames(List<String> variables)
 	{
 		String error = "";
-		for (int i = 0; i < variables.length; i++)
+		for (int i = 0; i < variables.size(); i++)
 		{
-		    if (variables[i] != null)
+		    if (variables.get(i) != null)
 		    {
-		        error += "\"" + variables[i] + "\"";
-		        if (i < variables.length - 1)
+		        error += "\"" + variables.get(i) + "\"";
+		        if (i < variables.size() - 1)
 		        {
 		            error += " or ";
 		        }

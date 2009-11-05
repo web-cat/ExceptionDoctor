@@ -1,6 +1,8 @@
 package org.webcat.exceptiondoctor.handlers;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
@@ -28,8 +30,9 @@ public class ArithmeticExceptionHandler extends AbstractExceptionHandler
 		{
 
 			String line = getLine(exToWrap);
-			String expr = findDenomExpression(line);
-			newMessage += getDivideZeroMessage(expr);
+			List<String> denoms = new ArrayList<String>();
+			findDenomExpressions(line, denoms, 0);
+			newMessage += getDivideZeroMessage(denoms);
 		}
 		else
 		{
@@ -41,28 +44,61 @@ public class ArithmeticExceptionHandler extends AbstractExceptionHandler
 				ArithmeticException.class);
 	}
 
-	private String getDivideZeroMessage(String expr)
+	private String getDivideZeroMessage(List<String> exprs)
 	{
 		String newMessage;
-		if (expr.equals("0"))
+        if (exprs.size() == 0)
+        {
+            newMessage = "It appears as if a denominator on this line "
+                + "evaluates to zero, but of course you cannot divide "
+                + "by zero.  You may want to add some code to check that "
+                + "the expression is not zero before dividing.  ";
+        }
+        else if (exprs.contains("0"))
+        {
+            newMessage = "The code has tried to divide by zero, which "
+                + "can't be done, of course!  ";
+        }
+        else if (exprs.size() == 1)
 		{
-			newMessage = "The code has tried to divide by zero, which "
-			    + "can't be done, of course!  ";
+            newMessage = "It appears as if the expression \""
+                + exprs.get(0)
+                + "\" evaluates to zero, but of course you cannot divide "
+                + "by zero.  You may want to add some code to check that "
+                + "the expression is not zero before dividing.  ";
 		}
-		else
-		{
-			newMessage = "It appears as if the expression \""
-					+ expr
-					+ "\" evaluates to zero, but of course you cannot divide "
-					+ "by zero.  You may want to add some code to check that "
-					+ "the expression is not zero before dividing.  ";
-		}
+        else
+        {
+            newMessage = "It appears as if one of the denominator expressions "
+                + "evaluates to zero (";
+            boolean isFirst = true;
+            for (String expr : exprs)
+            {
+                if (!isFirst)
+                {
+                    newMessage += " or ";
+                }
+                newMessage += '"' + expr + '"';
+                isFirst = false;
+            }
+                newMessage += "), but of course you cannot divide "
+                + "by zero.  You may want to add some code to check that "
+                + "the expression is not zero before dividing.  ";
+        }
 		return newMessage;
 	}
 
-	public String findDenomExpression(String line)
+	public void findDenomExpressions(
+	    String line, List<String> denoms, int beginIndex)
 	{
-		int index = getOperatorIndex(line);
+	    line = stripComments(line);
+
+		int index = getOperatorIndex(line, beginIndex);
+		if (index < 0)
+		{
+		    return;
+		}
+
 		// now walk through the line and try to find where the denominator
 		// ends
 		// first, ignore any blank space
@@ -70,7 +106,7 @@ public class ArithmeticExceptionHandler extends AbstractExceptionHandler
 		{
 			index++;
 		}
-		while (line.charAt(index) == ' ');
+		while (Character.isWhitespace(line.charAt(index)));
 
 		// okay we found something... this is where we start
 		int start = index;
@@ -88,24 +124,31 @@ public class ArithmeticExceptionHandler extends AbstractExceptionHandler
 				paren++;
 			if (c == ')')
 				paren--;
-			if (c == ' ' && paren == 0)
+			if (Character.isWhitespace(c) && paren == 0)
 				break;
 			index++;
 		}
 
 		String expr = line.substring(start, index);
-		return expr;
+		if (!expr.matches("([1-9][0-9\\.]*)|(0\\.[0-9]+)"))
+		{
+	        denoms.add(expr);
+		}
+		if (index < line.length())
+		{
+		    findDenomExpressions(line, denoms, index);
+		}
 	}
 
-	private int getOperatorIndex(String line)
+	private int getOperatorIndex(String line, int beginIndex)
 	{
 		// Figure out what the denominator was
 		// First start with the slash
 		// To do: there may be more than Throwable exception = null;one division
-		int index = line.indexOf("/");
+		int index = line.indexOf("/", beginIndex);
 		// also check for the mod operator
 		if (index == -1)
-			index = line.indexOf("%");
+			index = line.indexOf("%", beginIndex);
 		return index;
 	}
 

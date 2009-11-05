@@ -37,6 +37,7 @@ public class ArithmeticHandlerTest extends TestCase
 
 		assertNotNull(wrapped);
 		assertTrue(wrapped.getMessage().contains("divide by zero"));
+        System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
 	}
 
 	public void testFindDenomExpressionComplex()
@@ -65,5 +66,63 @@ public class ArithmeticHandlerTest extends TestCase
 
 		assertNotNull(wrapped);
 		assertTrue(wrapped.getMessage().contains("(b + c)"));
+        System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
 	}
+
+    public void testFindDenomExpressionDoubleDivide()
+    {
+        ArithmeticException wrapped = null;
+        try
+        {
+            int b = 0;
+            @SuppressWarnings("unused")
+            /* a / c */ int a = 100 / 2 / b / 3; // d /e/f
+        }
+        catch (ArithmeticException e)
+        {
+            try
+            {
+                wrapped = (ArithmeticException) handle.wrapException(e);
+            }
+            catch (Throwable e1)
+            {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+        }
+
+        assertNotNull(wrapped);
+        assertTrue(wrapped.getMessage().contains("\"b\""));
+        System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
+    }
+
+    public void testFindDenomExpressionTripleDivide()
+    {
+        ArithmeticException wrapped = null;
+        try
+        {
+            int b = 0;
+            int g = 0;
+            @SuppressWarnings("unused")
+            /* a / c */ int a = 100 / 2 / b / 3 /    g; // d /e/f
+        }
+        catch (ArithmeticException e)
+        {
+            try
+            {
+                wrapped = (ArithmeticException) handle.wrapException(e);
+            }
+            catch (Throwable e1)
+            {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+        }
+
+        assertNotNull(wrapped);
+        assertTrue(wrapped.getMessage().contains("\"b\" or \"g\""));
+        System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
+    }
 }

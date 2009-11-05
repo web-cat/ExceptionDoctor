@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ExceptionDoctor" default="build">
+  <property file="build.properties"/>
+
   <target name="build"
-    depends="build.doctor, build.bluej.core, build.bluej.junit, build.junit"/>
+    depends="build.doctor, build.bluej.core, build.bluej.junit"/>
 
   <target name="build.doctor">
-  	<delete file="exception-doctor.jar"/>
-  	<jar destfile="exception-doctor.jar">
-  	  <fileset dir="bin" excludes="bluej/,junit/,org/junit/"/>
+  	<delete file="exception-doctor_${version}.jar"/>
+  	<jar destfile="exception-doctor_${version}.jar">
+  	  <fileset dir="bin" excludes="bluej/"/>
   	</jar>
   </target>
 

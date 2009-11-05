@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import org.webcat.exceptiondoctor.runtime.Debugger;
@@ -256,26 +258,28 @@ public abstract class AbstractExceptionHandler implements
 	 *            find the variables.
 	 * @return
 	 */
-	protected String[] getVariables(String line, String end)
+	protected List<String> getVariables(String line, String end)
 	{
+	    // eliminate any comments first
+	    line = stripComments(line);
+
 		// tokenize it based on the character you're looking for
 		// StringTokenizer tok = new StringTokenizer(line, String.valueOf(line
 		// .charAt(end)));
 		StringTokenizer tok = new StringTokenizer(line, end);
 
-		// if there are no tokens, we couldn't figure out the variable
-		if (tok.countTokens() == 0)
-			return null;
-
-		// create the array of Strings to return
-		String[] variables = new String[tok.countTokens() - 1];
+		// create the array list of Strings to return
+        int numTokens = tok.countTokens() - 1;
+		List<String> variables = new ArrayList<String>(numTokens);
+		List<String> classesAndPackages = new ArrayList<String>();
 
 		// now look for the last part of each token (except for the last) -
 		// that's your variable
-		for (int j = 0; j < variables.length; j++)
+		for (int j = 0; j < numTokens; j++)
 		{
 			// get the next par
 			String part = tok.nextToken();
+			String thisVariable = null;
 			// remember whether we've found any variable name yet
 			boolean found = false;
 			// now loop *backwards* and look for something that indicates the
@@ -284,29 +288,76 @@ public abstract class AbstractExceptionHandler implements
 			{
 				// keep in mind that there may be some blank spaces between the
 				// [ and the variable name
+
+			    // If we're looking at the end of an arg list, then jump
+			    // over it in reverse
+			    if (part.charAt(i) == ')')
+			    {
+			        int left = part.lastIndexOf('(', i);
+			        if (left > 0)
+			        {
+			            i = left - 1;
+			        }
+			    }
+
 				if (!isStart(part.charAt(i)))
 					found = true;
 				// if we find the starting character, save it and break
 				if (found && isStart(part.charAt(i)))
 				{
-					variables[j] = part.substring(i + 1, part.length());
+					thisVariable = part.substring(i + 1, part.length());
 					break;
 				}
 			}
-			if (found && variables[j] == null)
+			if (found && thisVariable == null)
 			{
 			    // The variable is the whole "part"
-			    variables[j] = part;
+			    thisVariable = part;
 
 			    // If it is a dotted name, reconstruct it
-			    if (j > 0  && end.equals(".") && variables[j - 1] != null)
+			    if (j > 0  && end.equals(".") && variables.size() > 0)
 			    {
-			        variables[j] = variables[j - 1] + end + variables[j];
+			        thisVariable = variables.get(variables.size() - 1)
+			            + end + thisVariable;
 			    }
 			}
+			if (thisVariable != null)
+			{
+                // We should really ignore all class names, but without
+                // parsing the import list for the class, it isn't possible
+                // to determine whether a name is a class name or not.
+			    try
+			    {
+			        // The best we can do is test to see if it is a fully
+			        // qualified class name
+			        Class<?> c = Class.forName(thisVariable);
+			        addClassAndPackages(thisVariable, classesAndPackages);
+			    }
+			    catch (Exception e)
+			    {
+	                try
+	                {
+	                    // OK, we can also check for java.lang classes
+	                    Class<?> c = Class.forName("java.lang." + thisVariable);
+	                    addClassAndPackages(thisVariable, classesAndPackages);
+	                }
+	                catch (Exception e2)
+	                {
+	                    // Ignore any errors, since they mean this isn't
+	                    // a fully-qualified or java.lang class name
+	                }
+			    }
+			}
+			if (thisVariable != null && !variables.contains(thisVariable))
+			{
+			    variables.add(thisVariable);
+			}
+		}
+		for (String className : classesAndPackages)
+		{
+		    variables.remove(className);
 		}
 		return variables;
-
 	}
 
 	private boolean isStart(char c)
@@ -530,5 +581,35 @@ public abstract class AbstractExceptionHandler implements
         formattedMessage += "\n\n    " + getErrorType();
 		formattedMessage += "\n";
 		return formattedMessage;
+	}
+
+
+	/**
+	 * Removes any Java-style comments from the line, as well as trimming
+	 * whitespace.
+	 * @param line The line to strip
+	 * @return The line without any comments and leading/trailing space.
+	 */
+	public static String stripComments(String line)
+	{
+        return line
+            .trim()
+            .replaceAll("/\\*(.)*?\\*/", "")
+            .replaceFirst("^.*\\*/", "")
+            .replaceFirst("//.*$", "")
+            .trim();
+	}
+
+
+	private static void addClassAndPackages(
+	    String className, List<String> toList)
+	{
+	    int pos = className.lastIndexOf('.');
+	    while (pos > 0)
+	    {
+	        toList.add(className);
+	        className = className.substring(0, pos);
+	    }
+	    toList.add(className);
 	}
 }

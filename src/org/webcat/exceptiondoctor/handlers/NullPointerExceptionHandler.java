@@ -1,6 +1,7 @@
 package org.webcat.exceptiondoctor.handlers;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
@@ -34,46 +35,52 @@ public class NullPointerExceptionHandler extends AbstractExceptionHandler
 					NullPointerException.class);
 		}
 
-		String[] variables = getVariables(line, ".");
+		List<String> variables = getVariables(line, ".");
 
-		if (variables != null && variables.length > 0)
+		if (variables.size() == 1)
 		{
-			if (variables.length == 1)
-			{
-				newMessage += "It appears that the code was trying to call "
-				    + "a method or refer to a member variable on an object "
-				    + "called \""
-				    + variables[0] + "\", which is null.  ";
-			}
-			else
-			{
-				newMessage += "It appears that the code was trying to call a "
-				    + "method or refer to a member variable on one of the "
-				    + "objects in the line that is null: (";
-				// list the variables
-				for (int i = 0; i < variables.length; i++)
-				{
-				    if (variables[i] != null)
-				    {
-				        newMessage += "\"" + variables[i] + "\"";
-				        if (i < variables.length - 1)
-				            newMessage += " or ";
-				    }
-				}
-				newMessage += ").  ";
-			}
-
+		    if (variables.get(0).endsWith(")"))
+		    {
+                newMessage += "It appears that the code expected the "
+                    + "expression \""
+                    + variables.get(0)
+                    + "\" to return an object, but instead it returned null.  ";
+		    }
+		    else
+		    {
+		        newMessage += "It appears that the code expected the "
+		            + "variable \""
+		            + variables.get(0)
+		            + "\" to refer to an object, but instead it is null.  ";
+		    }
+		}
+		else if (variables.size() > 1)
+		{
+		    newMessage += "It appears that the code expected all of these "
+		        + "variables or expressions to refer to objects, but instead "
+		        + "at least one of them is null: (";
+		    // list the variables
+		    for (int i = 0; i < variables.size(); i++)
+		    {
+		        newMessage += "\"" + variables.get(i) + "\"";
+		        if (i < variables.size() - 1)
+		        {
+		            newMessage += " or ";
+		        }
+		    }
+		    newMessage += ").  ";
 		}
 		else
 		{
 			newMessage += "It appears that the code was trying to call a "
-			    + "method or refer to a member variable on an object that "
-			    + "is null.  ";
+			    + "method or refer to a field (member variable) on an object "
+			    + "through a variable that is null.  ";
 		}
 		newMessage += "Make sure the variable has been initialized in your "
-		    + "code.  Remember, declaring the variable isn't the same as "
-		    + "initializing it.  You may need to initialize the object "
-		    + "using the keyword \"new\".";
+		    + "code and that it refers to an object.  Remember, declaring the "
+		    + "variable is not the same as creating a new object.  If you "
+		    + "intend to create a new object, you need to use the keyword "
+		    + "\"new\".";
 		return buildNewException(exToWrap, newMessage,
 				NullPointerException.class);
 	}

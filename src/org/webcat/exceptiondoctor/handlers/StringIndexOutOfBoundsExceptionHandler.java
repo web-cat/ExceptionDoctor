@@ -1,6 +1,7 @@
 package org.webcat.exceptiondoctor.handlers;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.StringTokenizer;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
@@ -25,7 +26,7 @@ public class StringIndexOutOfBoundsExceptionHandler extends
 	{
 		String line = getLine(exToWrap);
 		// try to get the name of the variable or String
-		String[] variables = getVariables(line, "charAt");
+		List<String> variables = getVariables(line, "charAt");
 
 		// try to figure out what the index was... the message is of the form
 		// "String index out of range: 5"
@@ -36,15 +37,15 @@ public class StringIndexOutOfBoundsExceptionHandler extends
 		while (tok.hasMoreTokens())
 			index = tok.nextToken();
 
-		if (variables != null && variables.length > 0)
+		if (variables.size() > 0)
 		{
-			if (variables.length == 1)
+			if (variables.size() == 1)
 			{
 				newMessage += "It appears that the code was trying to access "
 				    + "an element at index "
 				    + index
 				    + " of the String \""
-				    + variables[0]
+				    + variables.get(0)
 				    + "\".  ";
 			}
 			else
@@ -54,14 +55,13 @@ public class StringIndexOutOfBoundsExceptionHandler extends
 				    + index
 				    + " of one of the Strings in the line of code: (";
 				// print the variable/String names
-				for (int i = 0; i < variables.length; i++)
+				for (int i = 0; i < variables.size(); i++)
 				{
-                    if (variables[i] != null)
-                    {
-                        newMessage += "\"" + variables[i] + "\"";
-                        if (i < variables.length - 1)
-                            newMessage += " or ";
-                    }
+				    newMessage += "\"" + variables.get(i) + "\"";
+				    if (i < variables.size() - 1)
+				    {
+				        newMessage += " or ";
+				    }
 				}
 				newMessage += ").  ";
 			}
