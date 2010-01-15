@@ -89,7 +89,7 @@ public class NumberFormatExceptionHandler extends AbstractExceptionHandler
 	{
 		String error = null;
 		// figure what string caused the error
-		String message = getMessage(exToWrap);
+		String message = exToWrap.getMessage();
 		StringTokenizer tok = new StringTokenizer(message, ":");
 		// ignore the first token
 		tok.nextToken();

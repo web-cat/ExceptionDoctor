@@ -30,7 +30,7 @@ public class StringIndexOutOfBoundsExceptionHandler extends
 
 		// try to figure out what the index was... the message is of the form
 		// "String index out of range: 5"
-		StringTokenizer tok = new StringTokenizer(getMessage(exToWrap), ": ");
+		StringTokenizer tok = new StringTokenizer(exToWrap.getMessage(), ": ");
 		String index = "<unknown>";
 		String newMessage = "";
 		// read all the tokens... we only care about the last one

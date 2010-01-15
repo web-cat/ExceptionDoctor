@@ -38,7 +38,7 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 			SourceCodeHiddenException
 	{
 		String line = getLine(exToWrap);
-		String oldMessage = getMessage(exToWrap);
+		String oldMessage = exToWrap.getMessage();
 		List<String> variables = getVariables(line, "[");
 		int intValue = getValue(oldMessage);
 		String arrayIndex = getIndexValue(variables, line);

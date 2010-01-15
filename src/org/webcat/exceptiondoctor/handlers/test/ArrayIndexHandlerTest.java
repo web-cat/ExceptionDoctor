@@ -1,5 +1,6 @@
-package org.webcat.exceptiondoctor.handlers;
+package org.webcat.exceptiondoctor.handlers.test;
 
+import org.webcat.exceptiondoctor.handlers.ArrayIndexOutOfBoundsExceptionHandler;
 import junit.framework.TestCase;
 
 public class ArrayIndexHandlerTest extends TestCase

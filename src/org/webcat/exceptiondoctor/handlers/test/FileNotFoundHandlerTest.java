@@ -1,8 +1,9 @@
-package org.webcat.exceptiondoctor.handlers;
+package org.webcat.exceptiondoctor.handlers.test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import org.webcat.exceptiondoctor.handlers.FileNotFoundExceptionHandler;
 
 import junit.framework.TestCase;
 

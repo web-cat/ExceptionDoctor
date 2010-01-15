@@ -22,7 +22,7 @@ public class ArithmeticExceptionHandler extends AbstractExceptionHandler
 			throws FileNotFoundException, LineNotFoundException,
 			SourceCodeHiddenException
 	{
-		String oldMessage = getMessage(exToWrap);
+		String oldMessage = exToWrap.getMessage();
 
 		String newMessage = "The code was trying to perform an illegal "
 		    + "arithmetic operation.  ";

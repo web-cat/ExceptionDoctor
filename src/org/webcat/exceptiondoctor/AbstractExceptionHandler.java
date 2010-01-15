@@ -38,18 +38,6 @@ public abstract class AbstractExceptionHandler implements
 	}
 
 	/**
-	 * gets the message out of an exception
-	 *
-	 * @param exToWrap
-	 *            exception to get message from.
-	 * @return returns the wrapped message.
-	 */
-	protected String getMessage(Throwable exToWrap)
-	{
-		return exToWrap.getMessage();
-	}
-
-	/**
 	 * a general method to wrap exceptions. This should never be called.
 	 *
 	 * @throws SourceCodeHiddenException
@@ -121,21 +109,35 @@ public abstract class AbstractExceptionHandler implements
 	}
 
 	private String findLine(Throwable exToWrap, StackTraceElement ste)
-			throws SourceCodeHiddenException, FileNotFoundException,
-			LineNotFoundException
+//			throws SourceCodeHiddenException, FileNotFoundException,
+//			LineNotFoundException
 	{
 	    if (ste == null)
 	    {
-	        throw new FileNotFoundException();
+//	        throw new FileNotFoundException();
+	        return "";
 	    }
 		String line;
 		Scanner scan = null;
-		scan = getScanner(exToWrap, ste);
+		    try
+            {
+                scan = getScanner(exToWrap, ste);
+            }
+            catch (FileNotFoundException e)
+            {
+                return "";
+            }
+            catch (SourceCodeHiddenException e)
+            {
+                return "";
+            }
+
 		int num = ste.getLineNumber();
 		if (num < 0)
 		{
 			Debugger.println("Unknown Sourceline");
-			throw new LineNotFoundException();
+			return "";
+//			throw new LineNotFoundException();
 		}
 		int count = 0;
 		// loop through and count how many lines have been read
@@ -208,6 +210,11 @@ public abstract class AbstractExceptionHandler implements
 			InputStream in = getClass().getClassLoader().getResourceAsStream(
 					packageName);
 
+			if (in == null)
+			{
+			    in = Thread.currentThread().getContextClassLoader()
+			        .getResourceAsStream(packageName);
+			}
 			if (in == null)
 			{
 				File existTester = new File("src/" + packageName);

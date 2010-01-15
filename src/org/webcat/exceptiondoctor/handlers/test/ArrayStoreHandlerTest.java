@@ -1,5 +1,6 @@
-package org.webcat.exceptiondoctor.handlers;
+package org.webcat.exceptiondoctor.handlers.test;
 
+import org.webcat.exceptiondoctor.handlers.ArrayStoreExceptionHandler;
 import junit.framework.TestCase;
 
 public class ArrayStoreHandlerTest extends TestCase

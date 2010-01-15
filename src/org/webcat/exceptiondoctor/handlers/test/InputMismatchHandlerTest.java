@@ -1,4 +1,4 @@
-package org.webcat.exceptiondoctor.handlers;
+package org.webcat.exceptiondoctor.handlers.test;
 
 import junit.framework.TestCase;
 

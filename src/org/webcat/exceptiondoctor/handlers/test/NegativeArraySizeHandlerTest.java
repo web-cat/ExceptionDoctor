@@ -1,5 +1,6 @@
-package org.webcat.exceptiondoctor.handlers;
+package org.webcat.exceptiondoctor.handlers.test;
 
+import org.webcat.exceptiondoctor.handlers.NegativeArraySizeExceptionHandler;
 import junit.framework.TestCase;
 
 public class NegativeArraySizeHandlerTest extends TestCase

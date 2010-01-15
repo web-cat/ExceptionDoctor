@@ -41,7 +41,7 @@ public class FileNotFoundExceptionHandler extends AbstractExceptionHandler
 			SourceCodeHiddenException
 	{
 		// figure out the name of the file
-		String oldMessage = getMessage(exToWrap);
+		String oldMessage = exToWrap.getMessage();
 		StringTokenizer tok = new StringTokenizer(oldMessage);
 		String file = tok.nextToken();
 		String newMessage = "It appears that the code was trying to operate on a file called "
@@ -75,7 +75,7 @@ public class FileNotFoundExceptionHandler extends AbstractExceptionHandler
 
 	private String testDirectory(Throwable exToWrap)
 	{
-		String message = getMessage(exToWrap);
+		String message = exToWrap.getMessage();
 		StringTokenizer tok = new StringTokenizer(message, ":");
 		String directory = tok.nextToken();
 		directory = directory.substring(0, directory.indexOf(" "));

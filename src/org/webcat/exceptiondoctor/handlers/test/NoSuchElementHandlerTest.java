@@ -1,9 +1,10 @@
-package org.webcat.exceptiondoctor.handlers;
+package org.webcat.exceptiondoctor.handlers.test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.webcat.exceptiondoctor.handlers.NoSuchElementExceptionHandler;
 
 import junit.framework.TestCase;
 

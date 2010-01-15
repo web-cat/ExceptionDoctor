@@ -24,9 +24,9 @@ public class NoClassDefFoundErrorHandler extends AbstractExceptionHandler
 	{
 		String newMessage =
 		    "It seems that the code was trying to use the class called "
-		    + getMessage(exToWrap)
+		    + exToWrap.getMessage()
 		    + ".  However, the Java VM could not locate the file "
-		    + getMessage(exToWrap)
+		    + exToWrap.getMessage()
 		    + ".class.  Make sure the .class file is in the right "
 		    + "directory.";
 

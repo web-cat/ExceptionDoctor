@@ -1,5 +1,6 @@
-package org.webcat.exceptiondoctor.handlers;
+package org.webcat.exceptiondoctor.handlers.test;
 
+import org.webcat.exceptiondoctor.handlers.ClassCastExceptionHandler;
 import junit.framework.TestCase;
 
 public class ClassCastHandlerTest extends TestCase
