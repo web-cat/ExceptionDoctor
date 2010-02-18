@@ -21,6 +21,7 @@
  */
 package bluej.runtime;
 
+import bluej.utility.Utility;
 import java.awt.AWTEvent;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -35,10 +36,14 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
-
-import bluej.utility.Utility;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import junit.framework.TestCase;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
@@ -75,7 +80,7 @@ public class ExecServer
     public static int execAction;   // EXEC_SHELL, TEST_SETUP or TEST_RUN
 
     public static Object methodReturn;
-    public static Class executedClass;
+    public static Class<?> executedClass;
     public static Throwable exception;
 
     // These constant values must match the variable names declared above
@@ -141,13 +146,14 @@ public class ExecServer
 
     // a hashmap of names to objects
     // private static Map objects = new HashMap();
-    private static Map objectMaps = new HashMap();
+    private static Map<String, BJMap<String, Object>> objectMaps =
+        new HashMap<String, BJMap<String, Object>>();
 
     /**
      * We need to keep track of open windows so that we can dispose of them
      * when simulating a System.exit() call
      */
-    private static List openWindows = Collections.synchronizedList(new LinkedList());
+    private static List<Window> openWindows = Collections.synchronizedList(new LinkedList());
     private static boolean disposingAllWindows = false; // true while we are disposing
 
     /**
@@ -225,12 +231,16 @@ public class ExecServer
             {
                 Object source = event.getSource();
                 if(event.getID() == WindowEvent.WINDOW_OPENED) {
-                    addWindow(source);
                     if(source instanceof Window) {
+                        addWindow((Window)source);
                         Utility.bringToFront((Window) source);
                     }
-                } else if(event.getID() == WindowEvent.WINDOW_CLOSED) {
-                    removeWindow(source);
+                } else {
+                    if((event.getID() != WindowEvent.WINDOW_CLOSED) ||
+                       !(source instanceof Window)) {
+                        return;
+                    }
+                    removeWindow((Window)source);
                 }
             }
         };
@@ -277,7 +287,7 @@ public class ExecServer
      *
      * @param   o   a window object which has just been opened
      */
-    private static void addWindow(final Object o)
+    private static void addWindow(final Window o)
     {
         openWindows.add(o);
     }
@@ -287,7 +297,7 @@ public class ExecServer
      *
      * @param   o   a window object which has just been closed
      */
-    private static void removeWindow(Object o)
+    private static void removeWindow(Window o)
     {
         if(!disposingAllWindows)   // don't bother if we are clearing up just now
             openWindows.remove(o);
@@ -296,12 +306,12 @@ public class ExecServer
     /**
      * Find a scoping Map for the given scopeId
      */
-    static Map getScope(String scopeId)
+    static BJMap<String, Object> getScope(String scopeId)
     {
         synchronized (objectMaps) {
-            Map m = (Map) objectMaps.get(scopeId);
+            BJMap<String, Object> m = objectMaps.get(scopeId);
             if (m == null) {
-                m = new HashMap();
+                m = new BJMap();
                 objectMaps.put(scopeId, m);
             }
             return m;
@@ -349,7 +359,7 @@ public class ExecServer
      * Load (and prepare) a class in the remote runtime. Return null if the class could not
      * be loaded.
      */
-    public static Class loadAndInitClass(String className)
+    public static Class<?> loadAndInitClass(String className)
     {
     	//Debug.message("[VM] loadClass: " + className);
 
@@ -422,12 +432,12 @@ public class ExecServer
     /**
      * Load a class, and all its inner classes.
      */
-    private static Class [] loadAllClasses(String className)
+    private static Class<?>[] loadAllClasses(String className)
     {
-        List l = new ArrayList();
+        List<Class<?>> l = new ArrayList<Class<?>>();
 
         try {
-            Class c = currentLoader.loadClass(className);
+            Class<?> c = currentLoader.loadClass(className);
             c.getFields(); // prepare class
             l.add(c);
             getDeclaredInnerClasses(c, l);
@@ -450,10 +460,10 @@ public class ExecServer
      * Add the declared inner classes of the given class to the given
      * list, recursively.
      */
-    private static void getDeclaredInnerClasses(Class c, List list)
+    private static void getDeclaredInnerClasses(Class<?> c, List<Class<?>> list)
     {
         try {
-            Class [] rlist = c.getDeclaredClasses();
+            Class<?>[] rlist = c.getDeclaredClasses();
             for (int i = 0; i < rlist.length; i++) {
                 c = rlist[i];
                 c.getFields(); // force preparation
@@ -474,7 +484,7 @@ public class ExecServer
     static void addObject(String scopeId, String instanceName, Object value)
     {
         // Debug.message("[VM] addObject: " + instanceName + " " + value);
-        Map scope = getScope(scopeId);
+        BJMap scope = getScope(scopeId);
         synchronized (scope) {
             scope.put(instanceName, value);
             scope.notify(); // in case Greenfoot is waiting for this object
@@ -568,7 +578,7 @@ public class ExecServer
      * @param paramtypes The argument types
      * @return  The method, or null if not found.
      */
-    static private Method findMethod(Class cl, String name, Class[] paramtypes)
+    static private Method findMethod(Class<?> cl, String name, Class<?>[] paramtypes)
     {
         while (cl != null) {
             try {
@@ -722,7 +732,7 @@ public class ExecServer
     private static void removeObject(String scopeId, String instanceName)
     {
         //Debug.message("[VM] removeObject: " + instanceName);
-        Map scope = getScope(scopeId);
+        BJMap scope = getScope(scopeId);
         synchronized (scope) {
             scope.remove(instanceName);
         }
@@ -737,15 +747,10 @@ public class ExecServer
     {
         synchronized(openWindows) {
             disposingAllWindows = true;
-            Iterator it = openWindows.iterator();
+            Iterator<Window> it = openWindows.iterator();
 
             while(it.hasNext()) {
-                Object o = it.next();
-
-                if (o instanceof Window) {
-                    Window w = (Window) o;
-                    w.dispose();
-                }
+                it.next().dispose();
             }
             openWindows.clear();
             disposingAllWindows = false;
@@ -948,7 +953,7 @@ public class ExecServer
      * @return The object
      */
     public static Object getObject(String instanceName) {
-        Map m = getScope(scopeId);
+        BJMap m = getScope(scopeId);
         Object rval = null;
 
         try {
