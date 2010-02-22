@@ -23,6 +23,9 @@ public class NullPointerExceptionHandler extends AbstractExceptionHandler
 			SourceCodeHiddenException
 	{
 		String line = getLine(exToWrap);
+		//List<String> argVars = this.getAllArguments(line);
+		List<String> variables = getVariables(line, ".");
+		//variables.addAll(argVars);
 		String newMessage = "";
 		// see if it's parseFloat or parseDouble that caused the error
 		if (line.contains("Float.parseFloat")
@@ -35,7 +38,6 @@ public class NullPointerExceptionHandler extends AbstractExceptionHandler
 					NullPointerException.class);
 		}
 
-		List<String> variables = getVariables(line, ".");
 
 		if (variables.size() == 1)
 		{

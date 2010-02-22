@@ -32,6 +32,7 @@ public class StringBoundsHandlerTest extends TestCase
 		}
 		assertNotNull(wrapped);
 		assertTrue(wrapped.getMessage().contains("hi"));
+		System.out.println(wrapped.getMessage());
 	}
 
 }

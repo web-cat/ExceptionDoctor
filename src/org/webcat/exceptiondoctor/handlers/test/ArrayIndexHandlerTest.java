@@ -64,6 +64,7 @@ public class ArrayIndexHandlerTest extends TestCase
 		}
 		assertTrue(wrapped != null);
 		assertTrue(wrapped.getMessage().contains("arrayObject"));
+		System.out.println(wrapped.getMessage());
 	}
 
 	public void testGetIndexValue()
@@ -118,7 +119,7 @@ public class ArrayIndexHandlerTest extends TestCase
 
 		assertTrue(wrapped != null);
 		assertTrue(wrapped.getMessage().contains("a"));
-
+		System.out.println(wrapped.getMessage());
 	}
 
 	public void testGetVariables()
@@ -173,6 +174,7 @@ public class ArrayIndexHandlerTest extends TestCase
 		assertTrue(wrapped != null);
 
 		assertTrue(wrapped.getMessage().contains("arrayObject2"));
+		System.out.println(wrapped.getMessage());
 	}
 
 	public void testBadIndex()
