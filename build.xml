@@ -16,34 +16,39 @@
   </target>
 
   <target name="build.bluej.core">
-    <delete file="bluejcore.jar"/>
+    <move file="bluejcore.jar" tofile="old.bluejcore.jar"/>
     <jar destfile="bluejcore.jar">
-      <zipfileset src="../BlueJ/bluejcore.jar"
+      <zipfileset src="old.bluejcore.jar"
         excludes="bluej/runtime/ExecServer*.class"/>
-      <fileset dir="bin">
-        <include name="bluej/runtime/"/>
-      </fileset>
+      <fileset dir="bin" includes="bluej/"/>
     </jar>
+    <delete file="old.bluejcore.jar"/>
   </target>
 
   <target name="build.bluej.junit">
-    <delete file="junit.jar"/>
+    <move file="junit.jar" tofile="old.junit.jar"/>
     <jar destfile="junit.jar">
-      <zipfileset src="../BlueJ/junit.jar"
-        excludes="junit/framework/TestCase.class"/>
+      <zipfileset src="old.junit.jar">
+        <exclude name="ExceptionDoctor*.class"/>
+        <exclude name="junit/framework/TestCase*.class"/>
+        <exclude name="org/junit/internal/runners/model/EachTestNotifier*.class"/>
+        <exclude name="org/webcat/"/>
+      </zipfileset>
       <fileset dir="bin">
-        <include name="junit/framework/"/>
-        <include name="org/webcat/"/>
+        <exclude name="bluej/"/>
         <exclude name="**/test/"/>
       </fileset>
     </jar>
+    <delete file="old.junit.jar"/>
   </target>
 
   <target name="build.junit">
     <delete file="exception-doctor-junit.jar"/>
     <jar destfile="exception-doctor-junit.jar">
-      <zipfileset src="junit-4.7.jar"
-        excludes="junit/framework/TestCase.class,org/junit/internal/runners/model/EachTestNotifier.class"/>
+      <zipfileset src="junit-4.7.jar">
+        <exclude name="junit/framework/TestCase*.class"/>
+        <exclude name="org/junit/internal/runners/model/EachTestNotifier*.class"/>
+      </zipfileset>
       <fileset dir="bin">
       	<exclude name="bluej/"/>
         <exclude name="**/test/"/>
