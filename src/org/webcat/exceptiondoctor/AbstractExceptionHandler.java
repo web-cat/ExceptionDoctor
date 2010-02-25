@@ -14,9 +14,9 @@ import org.webcat.exceptiondoctor.runtime.Debugger;
 /**
  * This is an Abstract handler class that all Handlers extend. It includes many
  * utility functions and standardize the exception messages.
- * 
+ *
  * @author mike
- * 
+ *
  */
 public abstract class AbstractExceptionHandler implements
 		ExceptionHandlerInterface {
@@ -25,7 +25,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * This sets the exception name for the exception handler.
-	 * 
+	 *
 	 * @param myExceptionName
 	 *            exception name
 	 */
@@ -36,7 +36,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * a general method to wrap exceptions. This should never be called.
-	 * 
+	 *
 	 * @throws SourceCodeHiddenException
 	 */
 	public Throwable wrapException(Throwable exToWrap)
@@ -47,7 +47,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * Gets the stack trace element out of an exception
-	 * 
+	 *
 	 * @param t
 	 *            the exception to get the stack trace element out of.
 	 * @return a stack trace element that is not part of the JAVA API
@@ -78,7 +78,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * Get the offending line out of an exception
-	 * 
+	 *
 	 * @param exToWrap
 	 *            the exception that you are looking for the offending line
 	 *            from.
@@ -139,7 +139,7 @@ public abstract class AbstractExceptionHandler implements
 	/**
 	 * This gets a scanner for the source code that caused the exception to
 	 * happen
-	 * 
+	 *
 	 * @param exToWrap
 	 *            the exception to wrap
 	 * @param oldStackTraceElement
@@ -171,7 +171,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * opens a file with the full class name.
-	 * 
+	 *
 	 * @param packageName
 	 *            fully qualified package and class name
 	 * @return a scanner for the file.
@@ -217,7 +217,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * Get all of the variables used in a line of source code.
-	 * 
+	 *
 	 * @param line
 	 *            the line to be searched for variables
 	 * @param end
@@ -397,7 +397,7 @@ public abstract class AbstractExceptionHandler implements
 	/**
 	 * returns a string that will be included in the exception error message.
 	 * This string says the type of exception it is.
-	 * 
+	 *
 	 * @return a string saying the type of exception
 	 */
 	protected String getErrorType() {
@@ -415,7 +415,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * This creates a new exception with a properly formatted exception message.
-	 * 
+	 *
 	 * @param exToWrap
 	 *            the exception to be re-written and re-wrapped
 	 * @param newMessage
@@ -476,7 +476,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * this method sees if source code exists in the stack trace.
-	 * 
+	 *
 	 * @param exception
 	 *            the exception to search the stack trace of.
 	 * @return a boolean representing the result.
@@ -499,7 +499,7 @@ public abstract class AbstractExceptionHandler implements
 	/**
 	 * creates a string to add to the exception message containing the violating
 	 * line of code.
-	 * 
+	 *
 	 * @param ex
 	 *            the exception that is being re written
 	 * @return a string with the violating source code in it.
@@ -508,20 +508,25 @@ public abstract class AbstractExceptionHandler implements
 	 */
 	public String getSourceLine(Throwable ex, StackTraceElement ste)
 			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException {
+			SourceCodeHiddenException
+	{
 		String line = getLine(ex, ste).trim();
-		String source = "";
-		source = "In file " + ste.getFileName();
-		source += " on line " + ste.getLineNumber();
-		if (line.length() != 0) {
-
-			source += "which reads";
-
-			source += ":\n\n    " + line + "\n";
+		String source = "In file " + ste.getFileName();
+		if (ste.getLineNumber() > 0)
+		{
+		    source += " on line " + ste.getLineNumber();
+		    if (line.length() > 0)
+		    {
+		        source += ", which reads:\n\n    " + line + "\n";
+		    }
+	        else
+	        {
+	            source += ".";
+	        }
 		}
 		else
 		{
-			source +=".";
+			source += ".";
 		}
 		return source;
 	}
@@ -572,7 +577,7 @@ public abstract class AbstractExceptionHandler implements
 
 	/**
 	 * this word wraps an exception message
-	 * 
+	 *
 	 * @param newMessage
 	 *            the new message to be wrapped in the new exception.
 	 * @param ex
@@ -597,7 +602,7 @@ public abstract class AbstractExceptionHandler implements
 	/**
 	 * Removes any Java-style comments from the line, as well as trimming
 	 * whitespace.
-	 * 
+	 *
 	 * @param line
 	 *            The line to strip
 	 * @return The line without any comments and leading/trailing space.
