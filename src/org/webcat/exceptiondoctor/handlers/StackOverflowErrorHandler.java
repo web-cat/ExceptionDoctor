@@ -21,11 +21,11 @@ public class StackOverflowErrorHandler extends AbstractExceptionHandler
 			throws FileNotFoundException, LineNotFoundException,
 			SourceCodeHiddenException
 	{
-		String errorString = "It seems as if the recursive part of your "
+		String errorString = "It seems the recursive part of your "
 		    + "code is not reaching its exit condition.  You may have "
-		    + "inadvertently put an infinite recursion into the program.  "
-		    + "Check the recursive method(s) and make sure that there is "
-		    + "some base case.";
+		    + "inadvertently written an infinitely recursive method.  "
+		    + "Check the recursive method(s) and make sure that it (they)"
+		    + " will always eventually reach some base case.";
 		return buildNewException(exToWrap, errorString,
 				StackOverflowError.class);
 	}
