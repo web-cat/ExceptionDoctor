@@ -289,7 +289,7 @@ public abstract class AbstractExceptionHandler implements
 				try {
 					// The best we can do is test to see if it is a fully
 					// qualified class name
-					Class<?> c = Class.forName(thisVariable);
+					//Class<?> c = Class.forName(thisVariable);
 					addClassAndPackages(thisVariable, classesAndPackages);
 				} catch (Exception e) {
 					try {
