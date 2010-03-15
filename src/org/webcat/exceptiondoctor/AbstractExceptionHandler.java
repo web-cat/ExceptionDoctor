@@ -1,10 +1,16 @@
 package org.webcat.exceptiondoctor;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Constructor;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -64,8 +70,7 @@ public abstract class AbstractExceptionHandler implements
 		// start with the first one
 		StackTraceElement e = elements[0];
 		// keep looking for one that DOESN'T start with "java"
-		while (e.getClassName().startsWith("java")
-				|| e.getClassName().startsWith("sun")) {
+		while (checkExclusions(e)) {
 			i++;
 			if (i == elements.length) {
 				return null;
@@ -75,7 +80,32 @@ public abstract class AbstractExceptionHandler implements
 
 		return e;
 	}
+	private boolean checkExclusions(StackTraceElement e)
+	{
+		try
+		{
 
+			InputStream input = getClass().getResourceAsStream("/exclude.conf");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			String exclusion = reader.readLine();
+			while(exclusion != null)
+			{
+				String className = e.getClassName();
+				if(className.startsWith(exclusion))
+				{
+					return true;
+				}
+				exclusion = reader.readLine();
+			}
+		}
+		catch (IOException e1)
+		{
+			System.err.println("Could not open exclusion list");
+			e1.printStackTrace();
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * Get the offending line out of an exception
 	 *
@@ -86,21 +116,16 @@ public abstract class AbstractExceptionHandler implements
 	 * @throws FileNotFoundException
 	 * @throws LineNotFoundException
 	 */
-	protected String getLine(Throwable exToWrap, StackTraceElement ste)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException {
+	protected String getLine(Throwable exToWrap, StackTraceElement ste) {
 		return findLine(exToWrap, ste);
 	}
 
-	protected String getLine(Throwable exToWrap) throws FileNotFoundException,
-			LineNotFoundException, SourceCodeHiddenException {
+	protected String getLine(Throwable exToWrap){
 		StackTraceElement ste = getTopMostStackTraceElement(exToWrap);
 		return findLine(exToWrap, ste);
 	}
 
 	private String findLine(Throwable exToWrap, StackTraceElement ste)
-	// throws SourceCodeHiddenException, FileNotFoundException,
-	// LineNotFoundException
 	{
 		if (ste == null) {
 			// throw new FileNotFoundException();
@@ -618,6 +643,7 @@ public abstract class AbstractExceptionHandler implements
 		while (pos > 0) {
 			toList.add(className);
 			className = className.substring(0, pos);
+			pos = className.lastIndexOf('.');
 		}
 		toList.add(className);
 	}
