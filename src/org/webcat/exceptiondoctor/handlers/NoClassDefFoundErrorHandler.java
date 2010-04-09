@@ -30,8 +30,6 @@ public class NoClassDefFoundErrorHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = null;
         String noCDFEMsg = exToWrap.getMessage();

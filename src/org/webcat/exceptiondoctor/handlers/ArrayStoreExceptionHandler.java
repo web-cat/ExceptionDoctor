@@ -19,8 +19,6 @@ public class ArrayStoreExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = "It seems that the code tried to store an object of type "
 				+ getBadObjectType(exToWrap);

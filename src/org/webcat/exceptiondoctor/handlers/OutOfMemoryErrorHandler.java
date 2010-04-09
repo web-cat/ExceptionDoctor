@@ -19,8 +19,6 @@ public class OutOfMemoryErrorHandler extends AbstractExceptionHandler implements
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = "The Java Virtual Machine has run out of "
 		    + "memory.  This may be caused by an infinite loop in your "

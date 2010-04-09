@@ -18,10 +18,11 @@ public class ClassCastHandlerTest extends TestCase
 		}
 		catch (ClassCastException e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			try
 			{
 				wrapped = (ClassCastException) handle.wrapException(e);
+				wrapped.printStackTrace();
 			}
 			catch (Throwable e1)
 			{

@@ -19,8 +19,6 @@ public class NoSuchElementExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = "It appears that the code was trying to access "
 		    + "an element but none exists.  Try to use a method like "

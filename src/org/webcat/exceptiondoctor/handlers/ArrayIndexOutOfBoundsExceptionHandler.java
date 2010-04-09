@@ -33,8 +33,6 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String line = getLine(exToWrap);
 		String oldMessage = exToWrap.getMessage();
@@ -49,7 +47,7 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 
 		error += getArrayNameMessage(line, intValue);
 		error += getIndexMessage(intValue);
-		error += getIndexValueMessage(line, intValue);
+		//error += getIndexValueMessage(line, intValue);
 
 		return buildNewException(exToWrap, error,
 				ArrayIndexOutOfBoundsException.class);
@@ -59,7 +57,7 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 	private String getArrayNameMessage(String line, int value)
 	{
 		String error = "";
-		List<String> variables = getArrayNames(line);
+		/*List<String> variables = getArrayNames(line);
 		if (variables.size() > 0)
 		{
 			error += "It seems that the code tried to use an illegal value as an index to an array.  ";
@@ -85,11 +83,11 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 			}
 		}
 		else
-		{
+		{*/
 			error += "It seems that the code tried to use an illegal value as an index to an object.  ";
 			error += "The code was trying to access an element at index "
 					+ value + " of an array (or other object) on that line.  ";
-		}
+		//}
 		return error;
 	}
 
@@ -113,7 +111,7 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 		return error;
 	}
 
-	private String getIndexValueMessage(String line, int intVal)
+	/*private String getIndexValueMessage(String line, int intVal)
 	{
 		String error = "";
 		List<String> vars = getArrayVariables(line);
@@ -126,12 +124,16 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 				error += ", ";
 			}
 		}
+		if(vars.size() == 0)
+		{
+			error+="COULD NOT FIND EXPRESSIONS";
+		}
 		error += "\" had the value " + intVal + " when the error occured.  ";
 
 		return error;
-	}
+	}*/
 
-	public String getIndexValue(List<String> variables, String line)
+	/*public String getIndexValue(List<String> variables, String line)
 	{
 		String index = "";
 		if (variables.size() == 1)
@@ -147,6 +149,6 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 			}
 		}
 		return index;
-	}
+	}*/
 
 }

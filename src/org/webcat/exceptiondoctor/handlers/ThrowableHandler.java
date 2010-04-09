@@ -17,8 +17,6 @@ public class ThrowableHandler extends AbstractExceptionHandler implements
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = "We could not identify the Exception that was thrown, "
 				+ "this is a generic message";

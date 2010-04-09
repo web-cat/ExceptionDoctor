@@ -19,8 +19,6 @@ public class NegativeArraySizeExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = "It appears that the code is trying to create an "
 		    + "array with a negative size.  Remember, the array must have a "

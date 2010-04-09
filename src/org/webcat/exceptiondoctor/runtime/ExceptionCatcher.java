@@ -1,17 +1,15 @@
 package org.webcat.exceptiondoctor.runtime;
 
-
 import java.io.FileNotFoundException;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 import org.webcat.exceptiondoctor.handlers.StackTraceSourceHandler;
 
-
 public class ExceptionCatcher
 {
 	/**
 	 * Generic Constructor for ExceptionCatcher
-	 *
+	 * 
 	 */
 	public ExceptionCatcher()
 	{
@@ -20,7 +18,7 @@ public class ExceptionCatcher
 
 	/**
 	 * This is the main entry point for the Backstop Redux suite.
-	 *
+	 * 
 	 * @param exception
 	 *            the exception that will be wrapped.
 	 * @return A wrapped exception with a more appropriate error message
@@ -36,52 +34,32 @@ public class ExceptionCatcher
 		}
 		try
 		{
-			try
+			// Grabs an instance of the Exception Map singleton
+			ExceptionMap mapper = ExceptionMap.getExceptionMap();
+			// Grabs a handle appropriate for the exception that is passed.
+			ExceptionHandlerInterface handle = mapper.getHandler(exception);
+			// Wrap the exception with an improved message
+
+			if (handle != null)
 			{
-				// Grabs an instance of the Exception Map singleton
-				ExceptionMap mapper = ExceptionMap.getExceptionMap();
-				// Grabs a handle appropriate for the exception that is passed.
-				ExceptionHandlerInterface handle = mapper.getHandler(exception);
-				// Wrap the exception with an improved message
-
-				if (handle != null)
+				Debugger.println("ExceptionDoctor Found an appropriate handler");
+				wrapper = handle.wrapException(exception);
+			}
+			else
+			{
+				Debugger.println("ExceptionDoctor Could not find an appropriate handler");
+				wrapper = exception;
+				if (log != null)
 				{
-					Debugger
-							.println("ExceptionDoctor Found an appropriate handler");
-					wrapper = handle.wrapException(exception);
-				}
-				else
-				{
-					Debugger
-							.println("ExceptionDoctor Could not find an appropriate handler");
-					wrapper = exception;
-					if (log != null)
-					{
-					    log.logError(wrapper);
-					}
-				}
-
-				if (log != null && handle != null)
-				{
-					log.log(wrapper);
+					log.logError(wrapper);
 				}
 			}
 
-			catch (SourceCodeHiddenException sourceAvail)
+			if (log != null && handle != null)
 			{
-				StackTraceSourceHandler handler = new StackTraceSourceHandler(
-						sourceAvail);
-				wrapper = handler.wrapException(sourceAvail);
+				log.log(wrapper);
+			}
 
-			}
-		}
-		catch (FileNotFoundException ex)
-		{
-			wrapper = exception;
-			if (Logger.isActive())
-			{
-				log.logNoSource(exception);
-			}
 		}
 		catch (Throwable t)
 		{

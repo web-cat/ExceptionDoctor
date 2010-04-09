@@ -45,9 +45,7 @@ public abstract class AbstractExceptionHandler implements
 	 *
 	 * @throws SourceCodeHiddenException
 	 */
-	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException {
+	public Throwable wrapException(Throwable exToWrap) {
 		return null;
 	}
 
@@ -131,7 +129,7 @@ public abstract class AbstractExceptionHandler implements
 			// throw new FileNotFoundException();
 			return "";
 		}
-		String line;
+		String line = "";
 		Scanner scan = null;
 		try {
 			scan = getScanner(exToWrap, ste);
@@ -145,7 +143,7 @@ public abstract class AbstractExceptionHandler implements
 		if (num < 0) {
 			Debugger.println("Unknown Sourceline");
 			return "";
-			// throw new LineNotFoundException();
+			//throw new LineNotFoundException();
 		}
 		int count = 0;
 		// loop through and count how many lines have been read
@@ -157,6 +155,15 @@ public abstract class AbstractExceptionHandler implements
 			// ex.printStackTrace();
 			/** To do: handle this more gracefully */
 			Debugger.println("Line not found.");
+		}
+		int endOfLine = line.trim().lastIndexOf(';');
+		
+		if(endOfLine < 0 || line.trim().length()-1 != endOfLine)
+		{
+			String longerLine = scan.nextLine();
+			int partialSemi = longerLine.indexOf(';');
+			longerLine = longerLine.substring(0, partialSemi+1);
+			line += longerLine;
 		}
 		return line;
 	}
@@ -250,7 +257,7 @@ public abstract class AbstractExceptionHandler implements
 	 *            find the variables.
 	 * @return
 	 */
-	public List<String> getVariables(String line, String end) {
+	/*public List<String> getVariables(String line, String end) {
 		// eliminate any comments first
 		line = stripComments(line);
 		List<String> variables = new ArrayList<String>();
@@ -335,9 +342,9 @@ public abstract class AbstractExceptionHandler implements
 			variables.remove(className);
 		}
 		return variables;
-	}
+	}*/
 
-	private String ripOutArguments(String line) {
+/*	private String ripOutArguments(String line) {
 		String newLine = "";
 		while (line.indexOf('(') >= 0) {
 			int left = line.indexOf('(');
@@ -369,6 +376,11 @@ public abstract class AbstractExceptionHandler implements
 	protected List<String> getAllArguments(String line, String end) {
 		List<String> vars = new ArrayList<String>();
 		// eliminate any comments first
+		while(line.indexOf(end) >0)
+		{
+			vars.add(line.substring(0, line.indexOf(end)));
+			line = line.substring(line.indexOf(end));
+		}
 		while (line.indexOf('(') >= 0) {
 			line = stripComments(line);
 			int left = line.indexOf('(');
@@ -406,18 +418,11 @@ public abstract class AbstractExceptionHandler implements
 		}
 		vars.addAll(getVariables(innerArgs.substring(0, eov), end));
 		vars.add(innerArgs.substring(0, eov));
-		/*
-		 * while (line.indexOf('(') >= 0) { line = stripComments(line); int left
-		 * = line.indexOf('('); int right = left + 1 +
-		 * getMatchingEndParen(line.substring(left + 1)); if (!(left < 0 ||
-		 * right < 0)) { getArgs0(vars, line.substring(left + 1, right),end); }
-		 * line = line.substring(right+1); }
-		 */
-	}
+	}*/
 
-	private boolean isStart(char c) {
+	/*private boolean isStart(char c) {
 		return (c == ' ' || c == '.' || c == '\t' || c == '(');
-	}
+	}*/
 
 	/**
 	 * returns a string that will be included in the exception error message.
@@ -453,9 +458,7 @@ public abstract class AbstractExceptionHandler implements
 	 * @throws LineNotFoundException
 	 */
 	protected Throwable buildNewException(Throwable exToWrap,
-			String newMessage, Class<?> exceptionType)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException {
+			String newMessage, Class<?> exceptionType) {
 		StackTraceElement ste = getTopMostStackTraceElement(exToWrap);
 		if (exToWrap == null) {
 			return null;
@@ -532,10 +535,9 @@ public abstract class AbstractExceptionHandler implements
 	 * @throws LineNotFoundException
 	 */
 	public String getSourceLine(Throwable ex, StackTraceElement ste)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String line = getLine(ex, ste).trim();
+		line = stripComments(line);
 		String source = "In file " + ste.getFileName();
 		if (ste.getLineNumber() > 0)
 		{
@@ -637,7 +639,7 @@ public abstract class AbstractExceptionHandler implements
 				"^.*\\*/", "").replaceFirst("//.*$", "").trim();
 	}
 
-	private static void addClassAndPackages(String className,
+	/*private static void addClassAndPackages(String className,
 			List<String> toList) {
 		int pos = className.lastIndexOf('.');
 		while (pos > 0) {
@@ -646,9 +648,9 @@ public abstract class AbstractExceptionHandler implements
 			pos = className.lastIndexOf('.');
 		}
 		toList.add(className);
-	}
+	}*/
 
-	protected List<String> getArrayVariables(String line) {
+/*	protected List<String> getArrayVariables(String line) {
 		List<String> vars = new ArrayList<String>();
 		while (line.indexOf('[') >= 0) {
 			int left = line.indexOf('[');
@@ -677,5 +679,5 @@ public abstract class AbstractExceptionHandler implements
 			}
 		}
 		return vars;
-	}
+	}*/
 }

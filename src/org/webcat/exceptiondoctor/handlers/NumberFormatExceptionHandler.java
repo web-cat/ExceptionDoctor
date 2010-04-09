@@ -24,8 +24,6 @@ public class NumberFormatExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String line = getLine(exToWrap);
 		String error = getError(exToWrap);

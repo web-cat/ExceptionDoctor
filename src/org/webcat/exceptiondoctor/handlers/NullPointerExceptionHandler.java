@@ -19,12 +19,10 @@ public class NullPointerExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String line = getLine(exToWrap);
 		//List<String> argVars = this.getAllArguments(line);
-		List<String> variables = getVariables(line, ".");
+		//List<String> variables = getVariables(line, ".");
 		//variables.addAll(argVars);
 		String newMessage = "";
 		// see if it's parseFloat or parseDouble that caused the error
@@ -39,7 +37,7 @@ public class NullPointerExceptionHandler extends AbstractExceptionHandler
 		}
 
 
-		if (variables.size() == 1)
+		/*if (variables.size() == 1)
 		{
 		    if (variables.get(0).endsWith(")"))
 		    {
@@ -73,11 +71,11 @@ public class NullPointerExceptionHandler extends AbstractExceptionHandler
 		    newMessage += ").  ";
 		}
 		else
-		{
+		{*/
 			newMessage += "It appears that the code was trying to call a "
 			    + "method or refer to a field (member variable) on an object "
 			    + "through a variable that is null.  ";
-		}
+		//}
 		newMessage += "Make sure the variable has been initialized in your "
 		    + "code and that it refers to an object.  Remember, declaring the "
 		    + "variable is not the same as creating a new object.  If you "

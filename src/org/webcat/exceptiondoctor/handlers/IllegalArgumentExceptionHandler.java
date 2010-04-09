@@ -19,8 +19,6 @@ public class IllegalArgumentExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = "An error occured while calling a method.  "
 		    + "It seems that the argument that was provided is not valid for "

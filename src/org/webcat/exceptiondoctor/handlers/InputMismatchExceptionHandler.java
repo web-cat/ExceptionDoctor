@@ -18,8 +18,6 @@ public class InputMismatchExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		// look at the method being called to see what the user was supposed to
 		// enter

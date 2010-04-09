@@ -20,6 +20,7 @@ public class NegativeArraySizeHandlerTest extends TestCase
 			try
 			{
 				wrapped = (NegativeArraySizeException) handle.wrapException(e);
+				wrapped.printStackTrace();
 			}
 			catch (Throwable e1)
 			{

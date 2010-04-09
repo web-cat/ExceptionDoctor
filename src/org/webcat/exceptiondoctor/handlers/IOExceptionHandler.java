@@ -19,8 +19,6 @@ public class IOExceptionHandler extends AbstractExceptionHandler implements
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = "An error occured while trying to perform an "
 		    + "input/output operation.  I'm sorry, I don't have anything "

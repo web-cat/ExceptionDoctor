@@ -19,8 +19,6 @@ public class ArithmeticExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String oldMessage = exToWrap.getMessage();
 

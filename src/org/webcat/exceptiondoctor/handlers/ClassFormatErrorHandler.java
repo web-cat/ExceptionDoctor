@@ -20,8 +20,6 @@ public class ClassFormatErrorHandler extends AbstractExceptionHandler implements
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage =
 		    "It appears that one of the class files has been corrupted.  ";

@@ -21,8 +21,6 @@ public class SAXParseExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		SAXParseException exception = (SAXParseException) exToWrap;
 		String message = exception.getMessage();

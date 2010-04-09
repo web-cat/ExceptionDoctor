@@ -18,8 +18,6 @@ public class StackOverflowErrorHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String errorString = "It seems the recursive part of your "
 		    + "code is not reaching its exit condition.  You may have "

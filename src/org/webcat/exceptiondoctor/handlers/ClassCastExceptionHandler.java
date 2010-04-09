@@ -25,8 +25,6 @@ public class ClassCastExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String[] splitMessage = exToWrap.getMessage().split(" ");
 		String actual = getActualType(splitMessage);

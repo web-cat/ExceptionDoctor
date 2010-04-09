@@ -37,8 +37,6 @@ public class FileNotFoundExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		// figure out the name of the file
 		String oldMessage = exToWrap.getMessage();

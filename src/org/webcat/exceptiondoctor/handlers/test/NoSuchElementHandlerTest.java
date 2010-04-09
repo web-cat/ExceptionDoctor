@@ -27,6 +27,7 @@ public class NoSuchElementHandlerTest extends TestCase
 			try
 			{
 				wrapped = (NoSuchElementException) handle.wrapException(e);
+				wrapped.printStackTrace();
 			}
 			catch (Throwable e1)
 			{

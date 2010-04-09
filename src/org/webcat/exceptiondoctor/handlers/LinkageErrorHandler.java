@@ -18,8 +18,6 @@ public class LinkageErrorHandler extends AbstractExceptionHandler implements
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		String newMessage = "An error occured in trying to read one of the "
 		    + ".class files. It may have been corrupted.  You should "

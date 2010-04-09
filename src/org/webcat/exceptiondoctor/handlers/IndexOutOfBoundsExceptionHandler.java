@@ -18,8 +18,6 @@ public class IndexOutOfBoundsExceptionHandler extends AbstractExceptionHandler
 
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException
 	{
 		// try to figure out what the index was... the message is of the form
 		// "Index: 1, Size: 1"

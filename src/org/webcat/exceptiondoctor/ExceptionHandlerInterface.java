@@ -22,7 +22,5 @@ public interface ExceptionHandlerInterface
 	 * @throws LineNotFoundException
 	 * @throws SourceCodeHiddenException
 	 */
-	public Throwable wrapException(Throwable exToWrap)
-			throws FileNotFoundException, LineNotFoundException,
-			SourceCodeHiddenException;
+	public Throwable wrapException(Throwable exToWrap);
 }
