@@ -148,7 +148,7 @@ public abstract class AbstractExceptionHandler implements
 		int count = 0;
 		// loop through and count how many lines have been read
 		do {
-			line = scan.nextLine();
+			line += scan.nextLine();
 			count++;
 		} while (count < num);
 		if (line == null) {
@@ -157,14 +157,17 @@ public abstract class AbstractExceptionHandler implements
 			Debugger.println("Line not found.");
 		}
 		int endOfLine = line.trim().lastIndexOf(';');
-		
-		if(endOfLine < 0 || line.trim().length()-1 != endOfLine)
+		String partial = line.substring(0, endOfLine);
+		int beginOfLine = partial.lastIndexOf(";");
+		int begOfLineBracket = line.trim().lastIndexOf('{');
+		if(beginOfLine < begOfLineBracket)
 		{
-			String longerLine = scan.nextLine();
-			int partialSemi = longerLine.indexOf(';');
-			longerLine = longerLine.substring(0, partialSemi+1);
-			line += longerLine;
+			beginOfLine = begOfLineBracket;
 		}
+		line = line.substring(beginOfLine+1, endOfLine+1).trim();
+		line = line.replaceAll(" ", "");
+		line = line.replaceAll("\t", "");
+		line = line.replaceAll("\n", "");
 		return line;
 	}
 
