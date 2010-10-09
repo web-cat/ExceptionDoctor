@@ -26,6 +26,9 @@ public class ClassCastExceptionHandler extends AbstractExceptionHandler
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
 	{
+		if(exToWrap.getMessage() == null)
+			return exToWrap;
+			
 		String[] splitMessage = exToWrap.getMessage().split(" ");
 		String actual = getActualType(splitMessage);
 		String newMessage = "It appears that the code tried to cast a "
