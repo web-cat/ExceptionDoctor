@@ -21,6 +21,8 @@ public class ClassFormatErrorHandler extends AbstractExceptionHandler implements
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
 	{
+		if(exToWrap.getMessage() == null)
+			return exToWrap;
 		String newMessage =
 		    "It appears that one of the class files has been corrupted.  ";
 

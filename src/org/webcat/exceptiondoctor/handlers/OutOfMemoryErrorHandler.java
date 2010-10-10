@@ -14,7 +14,6 @@ public class OutOfMemoryErrorHandler extends AbstractExceptionHandler implements
 	public OutOfMemoryErrorHandler()
 	{
 		super("OutOfMemoryError");
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

@@ -19,6 +19,8 @@ public class IndexOutOfBoundsExceptionHandler extends AbstractExceptionHandler
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
 	{
+		if(exToWrap.getMessage() == null)
+			return exToWrap;
 		// try to figure out what the index was... the message is of the form
 		// "Index: 1, Size: 1"
 		StringTokenizer tok = new StringTokenizer(exToWrap.getMessage(), ": ");

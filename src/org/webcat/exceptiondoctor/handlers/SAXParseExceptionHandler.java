@@ -22,6 +22,8 @@ public class SAXParseExceptionHandler extends AbstractExceptionHandler
 	@Override
 	public Throwable wrapException(Throwable exToWrap)
 	{
+		if(exToWrap.getMessage() == null)
+			return exToWrap;
 		SAXParseException exception = (SAXParseException) exToWrap;
 		String message = exception.getMessage();
 		if (exception.getMessage().contains(

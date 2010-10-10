@@ -21,10 +21,9 @@ public class ArithmeticExceptionHandler extends AbstractExceptionHandler
 	public Throwable wrapException(Throwable exToWrap)
 	{
 		String oldMessage = exToWrap.getMessage();
-
 		String newMessage = "The code was trying to perform an illegal "
 		    + "arithmetic operation.  ";
-		if (oldMessage.equals("/ by zero"))
+		if (oldMessage != null && oldMessage.equals("/ by zero"))
 		{
 
 			String line = getLine(exToWrap);
