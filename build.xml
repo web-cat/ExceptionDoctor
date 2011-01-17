@@ -25,8 +25,8 @@
 	</target>
 
 	<target name="build.bluej.junit">
-		<move file="junit-4.7.jar" tofile="old.junit.jar" />
-		<jar destfile="junit-4.7.jar">
+		<move file="junit.jar" tofile="old.junit.jar" />
+		<jar destfile="junit.jar">
 			<zipfileset src="old.junit.jar">
 				<exclude name="ExceptionDoctor*.class" />
 				<exclude name="junit/framework/TestCase*.class" />
@@ -37,6 +37,7 @@
 				<exclude name="bluej/" />
 				<exclude name="**/test/" />
 			</fileset>
+            <fileset file="exclude.conf"/>
 		</jar>
 		<delete file="old.junit.jar" />
 	</target>
@@ -52,6 +53,7 @@
 				<exclude name="bluej/" />
 				<exclude name="**/test/" />
 			</fileset>
+            <fileset file="exclude.conf"/>
 		</jar>
 	</target>
 
