@@ -1,5 +1,7 @@
 package org.webcat.exceptiondoctor.handlers.test;
 
+import java.io.File;
+
 import org.webcat.exceptiondoctor.handlers.NullPointerExceptionHandler;
 import junit.framework.TestCase;
 
@@ -29,8 +31,9 @@ public class NullPointerHandlerTest extends TestCase
 			}
 
 		}
+//		throw wrapped;
 		assertNotNull(wrapped);
-		System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
+		wrapped.printStackTrace();
 	}
 
 	@SuppressWarnings("null")
@@ -141,5 +144,29 @@ public class NullPointerHandlerTest extends TestCase
 		}
 		assertNotNull(wrapped);
 		System.out.println(wrapped.getMessage());
+	}
+	public void testLibraryNull()
+	{
+	    NullPointerExceptionHandler handle = new NullPointerExceptionHandler();
+        NullPointerException wrapped = null;
+        try
+        {
+            File library = new File((String)null);
+        }
+        catch (NullPointerException e)
+        {
+            try
+            {
+                wrapped = (NullPointerException) handle.wrapException(e);
+            }
+            catch (Throwable e1)
+            {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                assertTrue(false);
+            }
+
+        }
+        wrapped.printStackTrace();
 	}
 }

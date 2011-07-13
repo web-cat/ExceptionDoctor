@@ -1,34 +1,34 @@
 package org.webcat.exceptiondoctor.handlers;
 
-import java.io.FileNotFoundException;
 import java.util.StringTokenizer;
-import org.webcat.exceptiondoctor.AbstractExceptionHandler;
+import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
-import org.webcat.exceptiondoctor.LineNotFoundException;
-import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 
 
-public class NumberFormatExceptionHandler extends AbstractExceptionHandler
-		implements ExceptionHandlerInterface
+public class NumberFormatExceptionHandler extends AbstractHandler
+implements
+ExceptionHandlerInterface
 {
+    private static final Class<NumberFormatException> CLASS_TYPE = NumberFormatException.class;
+    @Override
+    protected Class<? extends Throwable> getExceptionType()
+    {
+        return CLASS_TYPE;
+    }
 	public enum EType
 	{
 		STORAGE, FLOAT, BADFORMAT,
 	};
 
-	public NumberFormatExceptionHandler()
-	{
-		super("NumberFormatException");
-
-	}
-
 	@Override
-	public Throwable wrapException(Throwable exToWrap)
+	public String getNewMessage(Throwable exToWrap)
 	{
-		String line = getLine(exToWrap);
+		String line = findLine(exToWrap);
+		String newMessage = "The string that was parsed was not in the correct format.  Try inspecting the string to check its value.";
+		if(line != null)
+		{
 		String error = getError(exToWrap);
 		EType type = getBadFileType(line, exToWrap);
-		String newMessage = "";
 		if (type == EType.STORAGE)
 		{
 			newMessage = messageStorage(error);
@@ -45,8 +45,9 @@ public class NumberFormatExceptionHandler extends AbstractExceptionHandler
 		{
 			newMessage = messageNullString();
 		}
-		return buildNewException(exToWrap, newMessage,
-				NumberFormatException.class);
+		}
+		
+		return newMessage;
 	}
 
 	public EType getBadFileType(String line, Throwable exToWrap)

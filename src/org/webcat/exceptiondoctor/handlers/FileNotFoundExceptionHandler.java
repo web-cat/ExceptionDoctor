@@ -4,23 +4,26 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.StringTokenizer;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
+import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
 import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 
 
-public class FileNotFoundExceptionHandler extends AbstractExceptionHandler
-		implements ExceptionHandlerInterface
+public class FileNotFoundExceptionHandler extends AbstractHandler
+implements
+ExceptionHandlerInterface
 {
-	public enum EType
-	{
-		NOFILE, PERMIS
-	};
-
-	public FileNotFoundExceptionHandler()
-	{
-		super("FileNotFoundException");
-	}
+    public enum EType
+    {
+        NOFILE, PERMIS
+    };
+    private static final Class<FileNotFoundException> CLASS_TYPE = FileNotFoundException.class;
+    @Override
+    protected Class<? extends Throwable> getExceptionType()
+    {
+        return CLASS_TYPE;
+    }
 
 	private EType getBadFileType(String oldMessage)
 	{
@@ -36,7 +39,7 @@ public class FileNotFoundExceptionHandler extends AbstractExceptionHandler
 	}
 
 	@Override
-	public Throwable wrapException(Throwable exToWrap)
+	public String getNewMessage(Throwable exToWrap)
 	{
 		// figure out the name of the file
 		String oldMessage = exToWrap.getMessage();
@@ -67,8 +70,7 @@ public class FileNotFoundExceptionHandler extends AbstractExceptionHandler
 			// not sure what the actual error is
 			newMessage += "For some reason, you are not able to use this file.  ";
 		}
-		return buildNewException(exToWrap, newMessage,
-				FileNotFoundException.class);
+		return newMessage;
 	}
 
 	private String testDirectory(Throwable exToWrap)

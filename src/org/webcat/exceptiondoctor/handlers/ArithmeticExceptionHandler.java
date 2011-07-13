@@ -1,32 +1,31 @@
 package org.webcat.exceptiondoctor.handlers;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import org.webcat.exceptiondoctor.AbstractExceptionHandler;
+import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
-import org.webcat.exceptiondoctor.LineNotFoundException;
-import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 
 
-public class ArithmeticExceptionHandler extends AbstractExceptionHandler
-		implements ExceptionHandlerInterface
+public class ArithmeticExceptionHandler extends AbstractHandler
+implements
+ExceptionHandlerInterface
 {
-	public ArithmeticExceptionHandler()
-	{
-		super("ArithmeticException");
-	}
-
+    private static final Class<ArithmeticException> CLASS_TYPE = ArithmeticException.class;
+    @Override
+    protected Class<? extends Throwable> getExceptionType()
+    {
+        return CLASS_TYPE;
+    }
 	@Override
-	public Throwable wrapException(Throwable exToWrap)
-	{
+    public String getNewMessage( Throwable exToWrap )
+    {
 		String oldMessage = exToWrap.getMessage();
 		String newMessage = "The code was trying to perform an illegal "
 		    + "arithmetic operation.  ";
-		if (oldMessage != null && oldMessage.equals("/ by zero"))
+		String line = super.findLine(exToWrap);
+		if (line != null && oldMessage != null && oldMessage.equals("/ by zero"))
 		{
 
-			String line = getLine(exToWrap);
 			List<String> denoms = new ArrayList<String>();
 			findDenomExpressions(line, denoms, 0);
 			newMessage += getDivideZeroMessage(denoms);
@@ -37,8 +36,7 @@ public class ArithmeticExceptionHandler extends AbstractExceptionHandler
 			    "Contact your instructor or a TA if you need more help.";
 		}
 
-		return buildNewException(exToWrap, newMessage,
-				ArithmeticException.class);
+		return newMessage;
 	}
 
 	private String getDivideZeroMessage(List<String> exprs)

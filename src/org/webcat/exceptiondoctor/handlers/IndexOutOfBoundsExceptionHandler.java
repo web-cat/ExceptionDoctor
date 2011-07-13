@@ -3,24 +3,28 @@ package org.webcat.exceptiondoctor.handlers;
 import java.io.FileNotFoundException;
 import java.util.StringTokenizer;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
+import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
 import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 
 
-public class IndexOutOfBoundsExceptionHandler extends AbstractExceptionHandler
-		implements ExceptionHandlerInterface
+public class IndexOutOfBoundsExceptionHandler extends AbstractHandler
+implements
+ExceptionHandlerInterface
 {
-	public IndexOutOfBoundsExceptionHandler()
-	{
-		super("IndexOutOfBoundsException");
-	}
+    private static final Class<IndexOutOfBoundsException> CLASS_TYPE = IndexOutOfBoundsException.class;
+    @Override
+    protected Class<? extends Throwable> getExceptionType()
+    {
+        return CLASS_TYPE;
+    }
 
 	@Override
-	public Throwable wrapException(Throwable exToWrap)
+	public String getNewMessage(Throwable exToWrap)
 	{
 		if(exToWrap.getMessage() == null)
-			return exToWrap;
+			return null;
 		// try to figure out what the index was... the message is of the form
 		// "Index: 1, Size: 1"
 		StringTokenizer tok = new StringTokenizer(exToWrap.getMessage(), ": ");
@@ -61,7 +65,6 @@ public class IndexOutOfBoundsExceptionHandler extends AbstractExceptionHandler
 				    + "so it doesn't have any elements in it yet.";
 			}
 		}
-		return buildNewException(exToWrap, newMessage,
-				IndexOutOfBoundsException.class);
+		return newMessage;
 	}
 }

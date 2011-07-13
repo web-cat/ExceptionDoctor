@@ -2,20 +2,22 @@ package org.webcat.exceptiondoctor.handlers;
 
 import java.io.FileNotFoundException;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
+import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
 import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 
 
-public class ClassCastExceptionHandler extends AbstractExceptionHandler
-		implements ExceptionHandlerInterface
+public class ClassCastExceptionHandler extends AbstractHandler
+implements
+ExceptionHandlerInterface
 {
-
-	public ClassCastExceptionHandler()
-	{
-		super("ClassCastException");
-		// this.exceptionName = "ClassCastException";
-	}
+    private static final Class<ClassCastException> CLASS_TYPE = ClassCastException.class;
+    @Override
+    protected Class<? extends Throwable> getExceptionType()
+    {
+        return CLASS_TYPE;
+    }
 
 	public String getActualType(String[] message)
 	{
@@ -24,10 +26,10 @@ public class ClassCastExceptionHandler extends AbstractExceptionHandler
 	}
 
 	@Override
-	public Throwable wrapException(Throwable exToWrap)
+	public String getNewMessage(Throwable exToWrap)
 	{
 		if(exToWrap.getMessage() == null)
-			return exToWrap;
+			return null;
 			
 		String[] splitMessage = exToWrap.getMessage().split(" ");
 		String actual = getActualType(splitMessage);
@@ -36,6 +38,6 @@ public class ClassCastExceptionHandler extends AbstractExceptionHandler
 		newMessage += "Remember, if you are casting, the object must be the "
 		    + "same class as (or a subclass of) the type to which you are "
 		    + "trying to cast.";
-		return buildNewException(exToWrap, newMessage, ClassCastException.class);
+		return newMessage;
 	}
 }

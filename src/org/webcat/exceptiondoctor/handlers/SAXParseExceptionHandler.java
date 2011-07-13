@@ -5,25 +5,29 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
 
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
+import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
 import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 import org.xml.sax.SAXParseException;
 
-public class SAXParseExceptionHandler extends AbstractExceptionHandler
-		implements ExceptionHandlerInterface
-{
-
-	public SAXParseExceptionHandler()
-	{
-		super("SAXParseException");
-	}
+public class SAXParseExceptionHandler
+		extends AbstractHandler
+		implements
+		ExceptionHandlerInterface
+		{
+		    private static final Class<SAXParseException> CLASS_TYPE = SAXParseException.class;
+		    @Override
+		    protected Class<? extends Throwable> getExceptionType()
+		    {
+		        return CLASS_TYPE;
+		    }
 
 	@Override
-	public Throwable wrapException(Throwable exToWrap)
+	public String getNewMessage(Throwable exToWrap)
 	{
 		if(exToWrap.getMessage() == null)
-			return exToWrap;
+			return null;
 		SAXParseException exception = (SAXParseException) exToWrap;
 		String message = exception.getMessage();
 		if (exception.getMessage().contains(
@@ -42,10 +46,7 @@ public class SAXParseExceptionHandler extends AbstractExceptionHandler
 		// TODO: This should use an inherited method. It is done this way
 		// because having no source code short circuits eDoc. This logic needs
 		// to be changed
-		StackTraceElement ste = getTopMostStackTraceElement(exToWrap);
-		message = formatMessage(message, "", 70);
-		return customRewireException(exception, message,
-				SAXParseException.class, ste);
+		return message;
 
 	}
 

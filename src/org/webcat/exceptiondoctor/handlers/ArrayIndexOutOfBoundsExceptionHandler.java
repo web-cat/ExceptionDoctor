@@ -3,18 +3,21 @@ package org.webcat.exceptiondoctor.handlers;
 import java.io.FileNotFoundException;
 import java.util.List;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
+import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
 import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 
-public class ArrayIndexOutOfBoundsExceptionHandler extends
-		AbstractExceptionHandler implements ExceptionHandlerInterface
+public class ArrayIndexOutOfBoundsExceptionHandler extends AbstractHandler
+implements
+ExceptionHandlerInterface
 {
-
-	public ArrayIndexOutOfBoundsExceptionHandler()
-	{
-		super("ArrayIndexOutOfBoundsException");
-	}
+    private static final Class<ArrayIndexOutOfBoundsException> CLASS_TYPE = ArrayIndexOutOfBoundsException.class;
+    @Override
+    protected Class<? extends Throwable> getExceptionType()
+    {
+        return CLASS_TYPE;
+    }
 
 	private String getArrayName(List<String> variables)
 	{
@@ -32,9 +35,9 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 	}
 
 	@Override
-	public Throwable wrapException(Throwable exToWrap)
+	public String getNewMessage(Throwable exToWrap)
 	{
-		String line = getLine(exToWrap);
+		String line = super.findLine(exToWrap);
 		String oldMessage = exToWrap.getMessage();
 		// List<String> variables = getVariables(line, "[");
 		// List<String> variables = getArrayVariables(line);
@@ -49,8 +52,7 @@ public class ArrayIndexOutOfBoundsExceptionHandler extends
 		error += getIndexMessage(intValue);
 		//error += getIndexValueMessage(line, intValue);
 
-		return buildNewException(exToWrap, error,
-				ArrayIndexOutOfBoundsException.class);
+		return error;
 
 	}
 

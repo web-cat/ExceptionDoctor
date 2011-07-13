@@ -4,21 +4,22 @@ import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
+import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
 import org.webcat.exceptiondoctor.LineNotFoundException;
 import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 
 
-public class NoClassDefFoundErrorHandler extends AbstractExceptionHandler
-		implements ExceptionHandlerInterface
+public class NoClassDefFoundErrorHandler extends AbstractHandler
+implements
+ExceptionHandlerInterface
 {
-
-	public NoClassDefFoundErrorHandler()
-	{
-		super("NoClassDefFoundError");
-		// this.exceptionName = "NoClassDefFoundError";
-	}
-
+    private static final Class<NoClassDefFoundError> CLASS_TYPE = NoClassDefFoundError.class;
+    @Override
+    protected Class<? extends Throwable> getExceptionType()
+    {
+        return CLASS_TYPE;
+    }
     /*
      * On case-insensitive Windows, the JVM may load Miscapitalized.class
      * when looking for class 'MisCapitalized'.  In this case, a 'wrong name'
@@ -29,7 +30,7 @@ public class NoClassDefFoundErrorHandler extends AbstractExceptionHandler
         = Pattern.compile("(\\S+) \\(wrong name: (\\S+)\\)");
 
 	@Override
-	public Throwable wrapException(Throwable exToWrap)
+	public String getNewMessage(Throwable exToWrap)
 	{
 		String newMessage = null;
         String noCDFEMsg = exToWrap.getMessage();
@@ -56,7 +57,6 @@ public class NoClassDefFoundErrorHandler extends AbstractExceptionHandler
                 + "directory.";
         }
 
-		return buildNewException(exToWrap, newMessage,
-				NoClassDefFoundError.class);
+		return newMessage;
 	}
 }

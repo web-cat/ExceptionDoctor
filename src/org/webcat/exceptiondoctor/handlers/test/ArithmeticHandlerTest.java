@@ -124,6 +124,7 @@ public class ArithmeticHandlerTest extends TestCase
 
         assertNotNull(wrapped);
         assertTrue(wrapped.getMessage().contains("\"b\" or \"g\""));
-        System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
+//        System.out.println(wrapped.getClass() + ":" + wrapped.getMessage());
+        wrapped.printStackTrace();
     }
 }
