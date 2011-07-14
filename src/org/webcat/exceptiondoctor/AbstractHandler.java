@@ -2,7 +2,7 @@ package org.webcat.exceptiondoctor;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
-import java.util.Set;
+import java.net.URL;
 import java.util.Stack;
 
 
@@ -20,13 +20,28 @@ public abstract class AbstractHandler
     }
 
 
-    private static File getSourceFile( StackTraceElement culprit )
+    private File getSourceFile( StackTraceElement culprit )
     {
-        if ( EdocConfig.getEdocConfig().contains( EdocConfig.SOURCE_LOCATION ) )
-            return new File( EdocConfig.getEdocConfig()
-                .get( EdocConfig.SOURCE_LOCATION ) );
-        File culpritFile = new File( culprit.getFileName() );
+        File culpritFile = null;
+        String fileName = culprit.getClassName().replace( '.', '/' ) + ".java";
+        URL fileURL = Thread.currentThread()
+            .getContextClassLoader()
+            .getResource( fileName );
 
+        if ( fileURL != null )
+        {
+            culpritFile = new File( fileURL.getFile() );
+            if ( culpritFile.exists() )
+                return culpritFile;
+        }
+        fileURL = getClass().getClassLoader().getResource( fileName );
+        if ( fileURL != null )
+        {
+            culpritFile = new File( fileURL.getFile() );
+            if ( culpritFile.exists() )
+                return culpritFile;
+        }
+        culpritFile = new File( culprit.getFileName() );
         if ( culpritFile.exists() )
             return culpritFile;
         culpritFile = new File( culprit.getClassName().replace( '.', '/' )
@@ -126,7 +141,7 @@ public abstract class AbstractHandler
                     libraryMessage += " is appropriate to call.";
 
                 }
-                newMessage+=wrap(libraryMessage,80,"\t");
+                newMessage += wrap( libraryMessage, 80, "\t" );
             }
         }
         newMessage += "\nStack Trace:\n";
@@ -137,14 +152,12 @@ public abstract class AbstractHandler
 
     private int findCulprit( StackTraceElement[] newTrace )
     {
-        Set<String> studentPackageNames = EdocConfig.getEdocConfig()
-            .getStudentPackages();
-        if ( !studentPackageNames.isEmpty() )
-            for ( int i = 0; i < newTrace.length; i++ )
-            {
-                if ( isStudent( newTrace[i] ) )
-                    return i;
-            }
+
+        for ( int i = 0; i < newTrace.length; i++ )
+        {
+            if ( isStudent( newTrace[i] ) )
+                return i;
+        }
         return 0;
     }
 
@@ -218,16 +231,6 @@ public abstract class AbstractHandler
 
     private boolean isStudent( StackTraceElement element )
     {
-        String packageName = getPackageName( element );
-        Set<String> studentPackageNames = EdocConfig.getEdocConfig()
-            .getStudentPackages();
-        for ( String studentPack : studentPackageNames )
-        {
-            if ( packageName.equals( studentPack ) )
-            {
-                return true;
-            }
-        }
         File potentialSource = getSourceFile( element );
         if ( potentialSource != null && potentialSource.exists() )
             return true;
@@ -241,7 +244,6 @@ public abstract class AbstractHandler
         int elementNumber = findCulprit( newTrace );
         StackTraceElement culprit = newTrace[elementNumber];
         File source = getSourceFile( culprit );
-        // TODO Auto-generated method stub
         if ( culprit.getLineNumber() < 0 || !source.exists() )
             return null;
         try
