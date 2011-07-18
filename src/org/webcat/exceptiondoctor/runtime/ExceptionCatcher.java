@@ -1,15 +1,12 @@
 package org.webcat.exceptiondoctor.runtime;
 
-import java.io.FileNotFoundException;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
-import org.webcat.exceptiondoctor.SourceCodeHiddenException;
-import org.webcat.exceptiondoctor.handlers.StackTraceSourceHandler;
 
 public class ExceptionCatcher
 {
 	/**
 	 * Generic Constructor for ExceptionCatcher
-	 * 
+	 *
 	 */
 	public ExceptionCatcher()
 	{
@@ -18,7 +15,7 @@ public class ExceptionCatcher
 
 	/**
 	 * This is the main entry point for the Backstop Redux suite.
-	 * 
+	 *
 	 * @param exception
 	 *            the exception that will be wrapped.
 	 * @return A wrapped exception with a more appropriate error message
