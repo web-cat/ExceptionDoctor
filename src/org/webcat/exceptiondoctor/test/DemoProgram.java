@@ -1,11 +1,17 @@
 package org.webcat.exceptiondoctor.test;
 
+/**
+ * Error demo program.
+ *
+ * @author Stephen Edwards
+ */
+@SuppressWarnings("null")
 public class DemoProgram
 {
 	/**
-	 * @param args
+	 * Demo main().
+	 * @param args Command line arguments.
 	 */
-	@SuppressWarnings("null")
 	public static void main(String[] args)
 	{
 	    switch (args.length)
@@ -21,12 +27,18 @@ public class DemoProgram
 	    }
 	}
 
-	public static void npeExample1()
+	/**
+	 * Produce a NullPointerException.
+	 */
+    public static void npeExample1()
 	{
         Object test = null;
         test.getClass();
 	}
 
+	/**
+	 * Produce a NullPointerException.
+	 */
 	public static void npeExample2()
     {
         Integer i = null;

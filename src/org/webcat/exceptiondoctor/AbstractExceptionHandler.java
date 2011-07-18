@@ -7,39 +7,33 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.Constructor;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.StringTokenizer;
 import org.webcat.exceptiondoctor.runtime.Debugger;
 
 
 /**
  * This is an Abstract handler class that all Handlers extend. It includes many
  * utility functions and standardize the exception messages.
- * 
+ *
  * @author mike
- * 
+ *
  */
 public abstract class AbstractExceptionHandler
                 implements
                 ExceptionHandlerInterface
 {
-
+    /** The name of the exception being handled. */
     protected final String exceptionName;
 
 
     /**
      * This sets the exception name for the exception handler.
-     * 
-     * @param myExceptionName
-     *            exception name
+     *
+     * @param myExceptionName The exception name.
      */
-    public AbstractExceptionHandler( String myExceptionName )
+    public AbstractExceptionHandler(String myExceptionName)
     {
         exceptionName = myExceptionName;
 
@@ -47,11 +41,9 @@ public abstract class AbstractExceptionHandler
 
 
     /**
-     * a general method to wrap exceptions. This should never be called.
-     * 
-     * @throws SourceCodeHiddenException
+     * A general method to wrap exceptions. This should never be called.
      */
-    public Throwable wrapException( Throwable exToWrap )
+    public Throwable wrapException(Throwable exToWrap)
     {
         return null;
     }
@@ -59,12 +51,11 @@ public abstract class AbstractExceptionHandler
 
     /**
      * Gets the stack trace element out of an exception
-     * 
-     * @param t
-     *            the exception to get the stack trace element out of.
+     *
+     * @param t The exception to get the stack trace element out of.
      * @return a stack trace element that is not part of the JAVA API
      */
-    protected StackTraceElement getTopMostStackTraceElement( Throwable t )
+    protected StackTraceElement getTopMostStackTraceElement(Throwable t)
     {
         // need to find the topmost StackTraceElement that is *NOT* part of the
         // Java API
@@ -97,8 +88,10 @@ public abstract class AbstractExceptionHandler
         try
         {
 
-            InputStream input = getClass().getResourceAsStream( "/exclude.conf" );
-            BufferedReader reader = new BufferedReader( new InputStreamReader( input ) );
+            InputStream input =
+                getClass().getResourceAsStream( "/exclude.conf" );
+            BufferedReader reader =
+                new BufferedReader( new InputStreamReader( input ) );
             String exclusion = reader.readLine();
             while ( exclusion != null )
             {
@@ -122,13 +115,11 @@ public abstract class AbstractExceptionHandler
 
     /**
      * Get the offending line out of an exception
-     * 
-     * @param exToWrap
-     *            the exception that you are looking for the offending line
-     *            from.
+     *
+     * @param exToWrap  The exception that you are looking for the offending
+     *                  line from.
+     * @param ste       The stack trace element indicating the line to find.
      * @return the offending line of source code.
-     * @throws FileNotFoundException
-     * @throws LineNotFoundException
      */
     protected String getLine( Throwable exToWrap, StackTraceElement ste )
     {
@@ -136,6 +127,13 @@ public abstract class AbstractExceptionHandler
     }
 
 
+    /**
+     * Get the offending line out of an exception
+     *
+     * @param exToWrap  The exception that you are looking for the offending
+     *                  line from.
+     * @return the offending line of source code.
+     */
     protected String getLine( Throwable exToWrap )
     {
         StackTraceElement ste = getTopMostStackTraceElement( exToWrap );
@@ -173,7 +171,7 @@ public abstract class AbstractExceptionHandler
             return "";
             // throw new LineNotFoundException();
         }
-        int count = 0;
+
         // loop through and count how many lines have been read
         try
         {
@@ -199,7 +197,7 @@ public abstract class AbstractExceptionHandler
                 //meh if it cant close, it is ok.
             }
         }
-        
+
         if(lines.size() == 0 )
             return null;
         line = lines.get( num-1 );
@@ -222,7 +220,7 @@ public abstract class AbstractExceptionHandler
     /**
      * This gets a scanner for the source code that caused the exception to
      * happen
-     * 
+     *
      * @param exToWrap
      *            the exception to wrap
      * @param oldStackTraceElement
@@ -262,7 +260,7 @@ public abstract class AbstractExceptionHandler
 
     /**
      * opens a file with the full class name.
-     * 
+     *
      * @param packageName
      *            fully qualified package and class name
      * @return a scanner for the file.
@@ -326,7 +324,7 @@ public abstract class AbstractExceptionHandler
 
     /**
      * Get all of the variables used in a line of source code.
-     * 
+     *
      * @param line
      *            the line to be searched for variables
      * @param end
@@ -339,15 +337,15 @@ public abstract class AbstractExceptionHandler
      * any comments first line = stripComments(line); List<String> variables =
      * new ArrayList<String>(); variables.addAll(getAllArguments(line, end));
      * line = ripOutArguments(line);
-     * 
+     *
      * // tokenize it based on the character you're looking for //
      * StringTokenizer tok = new StringTokenizer(line, String.valueOf(line //
      * .charAt(end))); StringTokenizer tok = new StringTokenizer(line, end);
-     * 
+     *
      * // create the array list of Strings to return int numTokens =
      * tok.countTokens() - 1; List<String> classesAndPackages = new
      * ArrayList<String>();
-     * 
+     *
      * // now look for the last part of each token (except for the last) - //
      * that's your variable for (int j = 0; j < numTokens; j++) { // get the
      * next par String part = tok.nextToken(); String thisVariable = null; //
@@ -356,17 +354,17 @@ public abstract class AbstractExceptionHandler
      * start of the variable name for (int i = part.length() - 1; i >= 0; i--) {
      * // keep in mind that there may be some blank spaces between the // [ and
      * the variable name
-     * 
+     *
      * // If we're looking at the end of an arg list, then jump // over it in
      * reverse if (part.charAt(i) == ')') { int left = part.lastIndexOf('(', i);
      * if (left > 0) { i = left - 1; } }
-     * 
+     *
      * if (!isStart(part.charAt(i))) found = true; // if we find the starting
      * character, save it and break if (found && isStart(part.charAt(i))) {
      * thisVariable = part.substring(i + 1, part.length()); break; } } if (found
      * && thisVariable == null) { // The variable is the whole "part"
      * thisVariable = part;
-     * 
+     *
      * // If it is a dotted name, reconstruct it if (j > 0 && end.equals(".") &&
      * variables.size() > 0) { thisVariable = variables.get(variables.size() -
      * 1) + end + thisVariable; } } if (thisVariable != null) { // We should
@@ -391,14 +389,14 @@ public abstract class AbstractExceptionHandler
      * + 1 + getMatchingEndArea(line.substring(left + 1), '(', ')'); newLine +=
      * line.substring(0, left + 1); newLine += line.substring(right); line =
      * line.substring(right); } return newLine; }
-     * 
+     *
      * private int getMatchingEndArea(String line, char start, char end) { int
      * level = 0; int i = 0; for (; i < line.length(); i++) { if (line.charAt(i)
      * == start) level++; if (line.charAt(i) == end && level == 0) { return i; }
      * else if (line.charAt(i) == end) { level--; }
-     * 
+     *
      * } return -1; }
-     * 
+     *
      * protected List<String> getAllArguments(String line, String end) {
      * List<String> vars = new ArrayList<String>(); // eliminate any comments
      * first while(line.indexOf(end) >0) { vars.add(line.substring(0,
@@ -409,9 +407,9 @@ public abstract class AbstractExceptionHandler
      * right < 0) { return new ArrayList<String>(); } getArgs0(vars,
      * line.substring(left + 1, right), end); line = line.substring(right); }
      * return vars;
-     * 
+     *
      * }
-     * 
+     *
      * private void getArgs0(List<String> vars, String innerArgs, String end) {
      * String line = innerArgs; innerArgs = innerArgs.trim(); // int left =
      * innerArgs.indexOf('('); // int right = getMatchingEndParen(innerArgs); //
@@ -434,7 +432,7 @@ public abstract class AbstractExceptionHandler
     /**
      * returns a string that will be included in the exception error message.
      * This string says the type of exception it is.
-     * 
+     *
      * @return a string saying the type of exception
      */
     protected String getErrorType()
@@ -454,18 +452,15 @@ public abstract class AbstractExceptionHandler
 
 
     /**
-     * This creates a new exception with a properly formatted exception message.
-     * 
-     * @param exToWrap
-     *            the exception to be re-written and re-wrapped
-     * @param newMessage
-     *            the message to be used in the new exception
-     * @param exceptionType
-     *            the class that the new exception with be created from.
-     * @return a new exception with a rewritten message and properly wrapped
+     * This creates a new exception with a properly formatted exception
+     * message.
+     *
+     * @param exToWrap The exception to be re-written and re-wrapped.
+     * @param newMessage The message to be used in the new exception.
+     * @param exceptionType The class that the new exception with be created
+     *                      from.
+     * @return A new exception with a rewritten message and properly wrapped
      *         exception.
-     * @throws FileNotFoundException
-     * @throws LineNotFoundException
      */
     protected Throwable buildNewException(
         Throwable exToWrap,
@@ -489,6 +484,17 @@ public abstract class AbstractExceptionHandler
     }
 
 
+    /**
+     * Create a new exception with a new message and the stack grace from
+     * an existing exception.
+     *
+     * @param exToWrap The existing exception to pull information from.
+     * @param newMessage The message for the new exception.
+     * @param exceptionType The type of the new exception.
+     * @param ste Currently unused (historical artifact).
+     * @return The newly created exception, with the stack trace of the
+     * original.
+     */
     public Throwable rewireException(
         Throwable exToWrap,
         String newMessage,
@@ -532,10 +538,9 @@ public abstract class AbstractExceptionHandler
 
 
     /**
-     * this method sees if source code exists in the stack trace.
-     * 
-     * @param exception
-     *            the exception to search the stack trace of.
+     * This method sees if source code exists in the stack trace.
+     *
+     * @param exception The exception to search the stack trace of.
      * @return a boolean representing the result.
      */
     private StackTraceElement getSourceExists( Throwable exception )
@@ -558,14 +563,12 @@ public abstract class AbstractExceptionHandler
 
 
     /**
-     * creates a string to add to the exception message containing the violating
-     * line of code.
-     * 
-     * @param ex
-     *            the exception that is being re written
-     * @return a string with the violating source code in it.
-     * @throws FileNotFoundException
-     * @throws LineNotFoundException
+     * Creates a string to add to the exception message containing the
+     * violating line of code.
+     *
+     * @param ex The exception that is being rewritten.
+     * @param ste The stack trace element specifying the location to use.
+     * @return A string with the violating source code in it.
      */
     public String getSourceLine( Throwable ex, StackTraceElement ste )
     {
@@ -644,17 +647,12 @@ public abstract class AbstractExceptionHandler
 
 
     /**
-     * this word wraps an exception message
-     * 
-     * @param newMessage
-     *            the new message to be wrapped in the new exception.
-     * @param ex
-     *            the exception that is being re wrapped
-     * @param charCount
-     *            number of characters to format to.
-     * @return a string that is properly wrapped
-     * @throws FileNotFoundException
-     * @throws LineNotFoundException
+     * This word-wraps an exception message.
+     *
+     * @param newMessage The new message to be wrapped in the new exception.
+     * @param sourceLine The line of source code for the message.
+     * @param charCount Number of characters to format to.
+     * @return A string that is properly wrapped.
      */
     public String formatMessage(
         String newMessage,
@@ -675,7 +673,7 @@ public abstract class AbstractExceptionHandler
     /**
      * Removes any Java-style comments from the line, as well as trimming
      * whitespace.
-     * 
+     *
      * @param line
      *            The line to strip
      * @return The line without any comments and leading/trailing space.
@@ -703,7 +701,7 @@ public abstract class AbstractExceptionHandler
      * getMatchingEndArea(line.substring(left + 1), '[', ']');
      * vars.add(line.substring(left + 1, right)); line = line.substring(right);
      * } return vars; }
-     * 
+     *
      * public List<String> getArrayNames(String line) { List<String> vars = new
      * ArrayList<String>(); while (line.indexOf('[') >= 0) { int left =
      * line.indexOf('['); int right = left + 1 +

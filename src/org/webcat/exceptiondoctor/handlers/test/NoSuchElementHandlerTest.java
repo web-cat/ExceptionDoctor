@@ -10,23 +10,22 @@ import junit.framework.TestCase;
 
 public class NoSuchElementHandlerTest extends TestCase
 {
-
-	@SuppressWarnings("unchecked")
 	public void testHandleException()
 	{
-		NoSuchElementExceptionHandler handle = new NoSuchElementExceptionHandler();
+		NoSuchElementExceptionHandler handle =
+		    new NoSuchElementExceptionHandler();
 		NoSuchElementException wrapped = null;
 		try
 		{
-			List l = new ArrayList(10);
-			Iterator i = l.iterator();
+			List<Object> list = new ArrayList<Object>(10);
+			Iterator<Object> i = list.iterator();
 			i.next();
 		}
 		catch (NoSuchElementException e)
 		{
 			try
 			{
-				wrapped = (NoSuchElementException) handle.wrapException(e);
+				wrapped = (NoSuchElementException)handle.wrapException(e);
 				wrapped.printStackTrace();
 			}
 			catch (Throwable e1)
@@ -37,5 +36,4 @@ public class NoSuchElementHandlerTest extends TestCase
 		}
 		assertNotNull(wrapped);
 	}
-
 }

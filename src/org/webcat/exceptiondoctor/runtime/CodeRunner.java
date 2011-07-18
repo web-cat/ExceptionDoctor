@@ -12,10 +12,12 @@ import java.lang.reflect.Method;
  */
 public class CodeRunner
 {
-
+    /**
+     * Create a new object.
+     */
 	public CodeRunner()
 	{
-
+	    // Nothing to do
 	}
 
 	/**
@@ -54,12 +56,12 @@ public class CodeRunner
 	}
 
 	/**
-	 * run the main method from a class file
+	 * run the main() method from a class file
 	 *
-	 * @param className
-	 * @param myArguments
-	 * @return
-	 * @throws InvocationTargetException
+	 * @param className The class containing the main() method.
+	 * @param myArguments The arguments to pass to main().
+	 * @return True if main() was found and executed, or false otherwise.
+	 * @throws Exception If any exception is thrown from main().
 	 */
 	public boolean runMain(String className, String[] myArguments)
 			throws Exception
