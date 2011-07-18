@@ -1,27 +1,24 @@
 package org.webcat.exceptiondoctor.handlers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
-
 import org.webcat.exceptiondoctor.AbstractExceptionHandler;
 import org.webcat.exceptiondoctor.AbstractHandler;
 import org.webcat.exceptiondoctor.ExceptionHandlerInterface;
-import org.webcat.exceptiondoctor.LineNotFoundException;
-import org.webcat.exceptiondoctor.SourceCodeHiddenException;
 import org.xml.sax.SAXParseException;
 
 public class SAXParseExceptionHandler
-		extends AbstractHandler
-		implements
-		ExceptionHandlerInterface
-		{
-		    private static final Class<SAXParseException> CLASS_TYPE = SAXParseException.class;
-		    @Override
-		    protected Class<? extends Throwable> getExceptionType()
-		    {
-		        return CLASS_TYPE;
-		    }
+    extends AbstractHandler
+    implements ExceptionHandlerInterface
+{
+    private static final Class<SAXParseException> CLASS_TYPE =
+        SAXParseException.class;
+
+    @Override
+    protected Class<? extends Throwable> getExceptionType()
+    {
+        return CLASS_TYPE;
+    }
 
 	@Override
 	public String getNewMessage(Throwable exToWrap)
@@ -40,8 +37,9 @@ public class SAXParseExceptionHandler
 					+ ", Java found that one "
 					+ "of your tags does not have a matching closing tag. "
 					+ " Don't forget that every tag must have a matching "
-					+ "closing tab.  This might also be thrown due to a simple typo."
-					+ "\nFor Example:\n" + "<body>\n" + "<\\body>\n This is Correct.";
+					+ "closing tag.  This might also be thrown due to a "
+					+ "simple typo.\nFor Example:\n<body>\n"
+					+ "<\\body>\n This is not correct.";
 		}
 		// TODO: This should use an inherited method. It is done this way
 		// because having no source code short circuits eDoc. This logic needs
