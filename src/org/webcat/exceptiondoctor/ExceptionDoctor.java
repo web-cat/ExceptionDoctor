@@ -37,6 +37,9 @@ public class ExceptionDoctor
      */
     public static Throwable addExplanation(Throwable original)
     {
-        return (new ExceptionCatcher()).findException(original);
+        return CATCHER.findException(original);
     }
+
+
+    private static final ExceptionCatcher CATCHER = new ExceptionCatcher();
 }
