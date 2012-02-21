@@ -28,4 +28,20 @@ ExceptionHandlerInterface
 		    + "allocated to java.";
 		return newMessage;
 	}
+
+
+	@Override
+	public Throwable wrapException(Throwable oldException)
+	{
+	    try
+	    {
+	        return super.wrapException(oldException);
+	    }
+	    catch (Throwable t)
+	    {
+	        // If anything bad happens trying to explain the OOM error,
+	        // then just swallow the inner error and rethrow the OOM original
+	        return oldException;
+	    }
+	}
 }
