@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ExceptionDoctor" default="build">
 	<property file="build.properties" />
+    <property name="junit.bluej.jar" value="junit-4.8.2.jar"/>
 
 	<target name="build" depends="build.doctor, build.bluej.core, build.bluej.junit" />
 
@@ -25,9 +26,9 @@
 	</target>
 
 	<target name="build.bluej.junit">
-		<move file="junit.jar" tofile="old.junit.jar" />
-		<jar destfile="junit.jar">
-			<zipfileset src="old.junit.jar">
+		<move file="${junit.bluej.jar}" tofile="old.${junit.bluej.jar}" />
+		<jar destfile="${junit.bluej.jar}">
+			<zipfileset src="old.${junit.bluej.jar}">
 				<exclude name="ExceptionDoctor*.class" />
 				<exclude name="junit/framework/TestCase*.class" />
 				<exclude name="org/junit/internal/runners/model/EachTestNotifier*.class" />
@@ -39,7 +40,7 @@
 			</fileset>
             <fileset file="exclude.conf"/>
 		</jar>
-		<delete file="old.junit.jar" />
+		<delete file="old.${junit.bluej.jar}" />
 	</target>
 
 	<target name="build.junit">
